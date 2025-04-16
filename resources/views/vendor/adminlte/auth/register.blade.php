@@ -7,105 +7,47 @@
 @stop
 
 @section('content')
-    @php
-        $loginUrl = View::getSection('login_url') ?? config('adminlte.login_url', 'login');
-        $registerUrl = View::getSection('register_url') ?? config('adminlte.register_url', 'register');
+<form action="{{ route('register.store') }}" method="POST">
+    @csrf
 
-        if (config('adminlte.use_route_url', false)) {
-            $loginUrl = $loginUrl ? route($loginUrl) : '';
-            $registerUrl = $registerUrl ? route($registerUrl) : '';
-        } else {
-            $loginUrl = $loginUrl ? url($loginUrl) : '';
-            $registerUrl = $registerUrl ? url($registerUrl) : '';
-        }
-    @endphp
-
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ $registerUrl }}" method="post">
-                @csrf
-
-                {{-- Name field --}}
-                <div class="input-group mb-3">
-                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                        value="{{ old('name') }}" placeholder="{{ __('adminlte::adminlte.full_name') }}" autofocus>
-
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-user {{ config('adminlte.classes_auth_icon', '') }}"></span>
-                        </div>
-                    </div>
-
-                    @error('name')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-
-                {{-- Email field --}}
-                <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                        value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}">
-
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
-                        </div>
-                    </div>
-
-                    @error('email')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-
-                {{-- Password field --}}
-                <div class="input-group mb-3">
-                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                        placeholder="{{ __('adminlte::adminlte.password') }}">
-
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
-                        </div>
-                    </div>
-
-                    @error('password')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-
-                {{-- Confirm password field --}}
-                <div class="input-group mb-3">
-                    <input type="password" name="password_confirmation"
-                        class="form-control @error('password_confirmation') is-invalid @enderror"
-                        placeholder="{{ __('adminlte::adminlte.retype_password') }}">
-
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
-                        </div>
-                    </div>
-
-                    @error('password_confirmation')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-
-                {{-- Register button --}}
-                <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
-                    <span class="fas fa-user-plus"></span>
-                    {{ __('adminlte::adminlte.register') }}
-                </button>
-            </form>
-        </div>
+    <!-- Nombre del usuario -->
+    <div class="form-group">
+        <label for="name">Nombre</label>
+        <input type="text" name="name" id="name" class="form-control" placeholder="Nombre completo" required>
     </div>
+
+    <!-- Correo electrónico -->
+    <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input type="email" name="email" id="email" class="form-control" placeholder="Correo electrónico" required>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" name="password" id="password" class="form-control" placeholder="Contraseña" required>
+    </div>
+
+    <!-- Confirmar contraseña -->
+    <div class="form-group">
+        <label for="password_confirmation">Confirmar contraseña</label>
+        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Confirmar contraseña" required>
+    </div>
+
+    <!-- Selección de rol -->
+    <div class="form-group">
+        <label for="role_id">Rol</label>
+        <select name="role_id" id="role_id" class="form-control" required>
+            <option value="" disabled selected>Selecciona el rol</option>
+            @foreach($roles as $role)
+                <option value="{{ $role->id }}">{{ $role->name }} - {{ $role->description }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</form>
+
 @stop
 
 @section('css')

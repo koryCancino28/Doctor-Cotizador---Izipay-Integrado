@@ -37,6 +37,7 @@
             <th>ID</th>
             <th>Nombre</th>
             <th>Email</th>
+            <th>Rol</th>
             <th>Fecha de Creación</th>
             <th>Acciones</th>
         </tr>
@@ -47,6 +48,7 @@
                 <td>{{ $user->id }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
+                <td>{{ $user->role->name ?? 'Sin rol' }}</td>
                 <td>{{ $user->created_at->format('d/m/Y') }}</td>
                 <td>
                     <!-- Botón para editar -->
