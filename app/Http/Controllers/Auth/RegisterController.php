@@ -34,6 +34,14 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm()
     {
+        if (!auth()->check()) {
+        return redirect()->route('login');
+    }
+    
+    // Verificar rol
+    if (!in_array(auth()->user()->role->name, ['Admin', 'Jefe Proyecto'])) {
+        abort(403, 'Acceso no autorizado');
+    }
         // Obtener todos los roles de la base de datos
         $roles = Role::all();
         return view('auth.register', compact('roles'));  
@@ -47,13 +55,14 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
+        // dd($request->all());
         // Validar los datos del formulario de registro
         $this->validator($request->all())->validate();
 
          // Obtener el rol por ID
          $role = Role::findOrFail($request->role_id);
         // Crear el usuario con el rol asignado
-        $user = $this->create($request->all(), $role);
+        $user = $this->create($request->all()); 
 
         // Redirigir a la página de usuarios sin loguearse
         return redirect()->route('usuarios.index')->with('success', 'Usuario registrado exitosamente');
@@ -69,9 +78,11 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'], // Asegúrate que 'email' se valide en la tabla users
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role_id' => ['required', 'exists:roles,id'],  // Validar que el role_id exista en la tabla roles
+            'role_id' => ['required', 'exists:roles,id'],
+        ], [
+            'email.unique' => 'El correo electrónico ya está registrado. Por favor, use otro.', // Mensaje personalizado
         ]);
     }
 
@@ -113,11 +124,17 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'role_id' => 'required|exists:roles,id', // Validar que el role_id exista en la tabla roles
         ]);
-
+    
         $user = User::findOrFail($id); // Buscar el usuario por su ID
-        $user->update($request->only('name', 'email'));
-
+        // Actualizar el usuario incluyendo el role_id
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role_id' => $request->role_id, // Asegúrate de actualizar el role_id
+        ]);
+    
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente');
     }
 

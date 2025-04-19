@@ -21,7 +21,13 @@ class UsersSeeder extends Seeder
             'name' => 'Sistemas',
             'email' => 'sistemas@grobdi.com',
             'password' => Hash::make('12345678'), // Usando bcrypt para encriptar la contraseña
-            'role_id' => 1,  // Asignar el rol de Admin (ID = 1)
+            'role_id' => 1,  
+        ]);
+        User::create([
+            'name' => 'Cristopher Alcantara',
+            'email' => 'jefe.proyectos@grobdi.com',
+            'password' => Hash::make('12345678'), // Usando bcrypt para encriptar la contraseña
+            'role_id' => 2,  
         ]);
     }
 }
