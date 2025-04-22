@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('active')->default(1);
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->string('cmp')->nullable()->unique();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -38,7 +39,6 @@ return new class extends Migration
             $table->integer('last_activity')->index();
         });
     }
-
     /**
      * Reverse the migrations.
      */

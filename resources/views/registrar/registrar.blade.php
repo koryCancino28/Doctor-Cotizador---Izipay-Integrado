@@ -95,13 +95,13 @@
 
         /* Estilo de los botones de acción */
         .btn-warning {
-            background-color:rgb(196, 254, 151);
-            color: dark;
+            background-color:rgb(118, 124, 148);
+            color: white;
             border: none;
         }
 
         .btn-warning:hover {
-            background-color:rgb(160, 254, 73);
+            background-color:rgb(93, 95, 125);
             color: white;
         }
 

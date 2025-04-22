@@ -67,6 +67,17 @@
                                 </div>
                             </div>
 
+                            <!-- CMP (solo visible si el rol es Doctor) -->
+                <div class="form-group" id="cmp_group" style="display: none;">
+                        <label for="cmp" style="color: #fe495f;">CMP</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-id-card" style="color:rgb(245, 114, 129);"></i></span>
+                            </div>
+                            <input type="text" name="cmp" id="cmp" class="form-control" placeholder="Ingrese el CMP" value="{{ old('cmp', $user->cmp) }}">
+                        </div>
+                    </div>
+
                             <!-- Botón de Actualización -->
                             <div class="form-group text-center">
                                 <button type="submit" class="btn btn-danger" style="padding: 10px 20px; border-radius: 5px;">
@@ -118,6 +129,24 @@
 
 @section('js')
     <script>
-        // Aquí puedes agregar código JS si es necesario
+        document.addEventListener('DOMContentLoaded', function() {
+    // Función para mostrar u ocultar el campo CMP según el rol seleccionado
+    const roleSelect = document.getElementById('role_id');
+    const cmpGroup = document.getElementById('cmp_group');
+    
+    roleSelect.addEventListener('change', function() {
+        // Si el rol es "Doctor" (ID 4), mostrar el campo cmp
+        if (roleSelect.value == '4') {
+            cmpGroup.style.display = 'block'; // Mostrar el campo CMP
+        } else {
+            cmpGroup.style.display = 'none'; // Ocultar el campo CMP
+        }
+    });
+
+    // Verificar si el rol seleccionado al cargar la página es "Doctor"
+    if (roleSelect.value == '4') {
+        cmpGroup.style.display = 'block'; // Mostrar el campo CMP si el rol es Doctor
+    }
+});
     </script>
 @stop
