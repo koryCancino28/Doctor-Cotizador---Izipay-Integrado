@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('cmp')->nullable()->unique();
             $table->enum('tipo_delivery', ['Recojo en tienda', 'Entrega a domicilio'])->nullable();
+            $table->string('telefono')->nullable(); 
+            $table->text('direccion')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relación con users
             $table->timestamps();
         });

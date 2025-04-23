@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('precio_publico', 8, 2);
             $table->decimal('precio_medico', 8, 2);
+            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
             $table->timestamps();
         });
     }
