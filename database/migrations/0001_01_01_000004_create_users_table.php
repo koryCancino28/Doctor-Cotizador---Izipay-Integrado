@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('active')->default(1);
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
-            $table->string('cmp')->nullable()->unique();
+            $table->string('cmp')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
