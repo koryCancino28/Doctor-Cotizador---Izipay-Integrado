@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('formulacion_id')->constrained('formulacions')->onDelete('cascade'); 
             $table->integer('cantidad'); // Cantidad seleccionada por el cliente
             $table->decimal('total', 8, 2); 
+            $table->text('observacion')->nullable();
             $table->timestamps();
         });
     }

@@ -10,12 +10,7 @@ class Cotizacion extends Model
 
     protected $table = 'cotizaciones';
 
-    protected $fillable = [
-        'cliente_id',
-        'formulacion_id',
-        'cantidad',
-        'total'
-    ];
+    protected $fillable = ['cliente_id', 'formulacion_id', 'cantidad', 'total', 'observacion'];
 
     public function cliente()
     {
