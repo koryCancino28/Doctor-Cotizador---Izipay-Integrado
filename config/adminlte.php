@@ -334,6 +334,16 @@ return [
             'icon' => 'fas fa-fw fa-user',
         ],
         [
+            'text' => 'Cotizador',
+            'url' => '/cotizacion',
+            'icon' => 'fas fa-fw fa-user',
+        ],
+        [
+            'text' => 'Doctores',
+            'url' => '/clientes',
+            'icon' => 'fas fa-fw fa-user',
+        ],
+        [
             'text' => 'Registrar Usuarios',
             'url' => 'usuarios',
             'icon' => 'fas fa-fw fa-user',

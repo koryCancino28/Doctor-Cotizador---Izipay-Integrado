@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="container" style="background-color:rgb(255, 255, 255); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(254,73,95,0.2);">
-<h1 style="color: #fe495f;">Mis Formulaciones</h1>
+<h1 style="color: #fe495f;text-align: center;"><strong>Mis Formulaciones</strong></h1>
     @unless(auth()->user()->cliente)
         <p class="text-danger">No tienes formulaciones registradas o no estás logueado como cliente.</p>
     @else
@@ -87,13 +87,14 @@
             </tbody>
         </table>
         <button type="submit" class="btn btn-success" style="background-color: #767c94; border: none;">Guardar Cotización</button>
+    
     </form>
 
     <h3 class="mt-4" style="color: #fe495f;">Resumen</h3>
     <table class="table table-striped table-centered" style="background-color: rgb(255, 255, 241); border-color: #fe495f;">
         <thead>
             <tr style="background-color: #fe495f; color: white;">
-                <th>Producto</th>
+                <th>Formulación</th>
                 <th>Cantidad</th>
                 <th>Precio</th>
                 <th>Subtotal</th>
@@ -229,71 +230,72 @@ $(function() {
         actualizarResumen();
     });
 
-    // Enviar formulario al servidor
-    $form.submit(function(e) {
-        e.preventDefault(); // Previene el envío del formulario hasta que se confirme la acción
+// Enviar formulario al servidor
+$form.submit(function(e) {
+    e.preventDefault();
 
-        // Confirmación de SweetAlert2
-        swalWithBootstrapButtons.fire({
-            title: "¿Seguro que quieres guardar esta cotización?",
-            text: "¡No podrás revertir esta acción!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Sí, guardar",
-            cancelButtonText: "No, cancelar",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Validar los campos de envío antes de enviar los datos al servidor
-                const telefono = $('#telefono').val().trim();
-                const tipoDelivery = $('#tipo_delivery').val();
-                const direccion = $('#direccion').val().trim();
-                const observacion = $('#observacion').val().trim();
+    swalWithBootstrapButtons.fire({
+        title: "¿Seguro que quieres guardar esta cotización?",
+        text: "¡No podrás revertir esta acción!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, guardar",
+        cancelButtonText: "No, cancelar",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const telefono = $('#telefono').val().trim();
+            const tipoDelivery = $('#tipo_delivery').val();
+            const direccion = $('#direccion').val().trim();
+            const observacion = $('#observacion').val().trim();
 
-                if (!telefono || !tipoDelivery || !direccion) {
-                    swalWithBootstrapButtons.fire({
-                        title: "Error",
-                        text: "Por favor complete todos los datos de envío.",
-                        icon: "error"
-                    });
-                    return;
-                }
-
-                // Si todo está validado, enviar los datos al servidor
-                $.post($form.attr('action'), {
-                    _token: $('meta[name="csrf-token"]').attr('content'),
-                    items: Object.values(cotizador), // Enviar las formulaciones seleccionadas
-                    telefono: telefono,
-                    tipo_delivery: tipoDelivery,
-                    direccion: direccion,
-                    observacion: observacion 
-                }).done(res => {
-                    // Notificar al usuario de éxito
-                    swalWithBootstrapButtons.fire({
-                        title: "¡Guardado!",
-                        text: "¡Cotización guardada exitosamente!",
-                        icon: "success"
-                    });
-
-                    Object.keys(cotizador).forEach(k => delete cotizador[k]);  // Limpiar el cotizador
-                    actualizarResumen();  // Actualizar el resumen
-                    
-                }).fail(err => {
-                    swalWithBootstrapButtons.fire({
-                        title: "Error",
-                        text: 'Ingresa los campos requeridos en los datos de envío y/o agrega formulaciones' || 'Error al guardar',
-                        icon: "error"
-                    });
-                });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
+            if (!telefono || !tipoDelivery || !direccion) {
                 swalWithBootstrapButtons.fire({
-                    title: "Cancelado",
-                    text: "La cotización no fue guardada.",
+                    title: "Error",
+                    text: "Por favor complete todos los datos de envío.",
                     icon: "error"
                 });
+                return;
             }
-        });
+
+            $.post($form.attr('action'), {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                items: Object.values(cotizador),
+                telefono: telefono,
+                tipo_delivery: tipoDelivery,
+                direccion: direccion,
+                observacion: observacion 
+            }).done(res => {
+                swalWithBootstrapButtons.fire({
+                    title: "¡Guardado!",
+                    text: "¡Cotización guardada exitosamente!",
+                    icon: "success"
+                }).then(() => {
+                    // URL del PDF generado en el backend
+                    const pdfUrl = res.pdf_url;
+                    
+                    // Crear un enlace para forzar la descarga
+                    const link = document.createElement('a');
+                    link.href = pdfUrl;
+                    link.download = 'Cotizacion Grobdi.pdf';  // Nombre que se dará al archivo descargado
+                    link.click();  // Simula el clic en el enlace para descargar el archivo
+
+                    // Limpiar el cotizador
+                    Object.keys(cotizador).forEach(k => delete cotizador[k]);
+                    actualizarResumen();
+                });
+                
+            }).fail(err => {
+                swalWithBootstrapButtons.fire({
+                    title: "Error",
+                    text: err.responseJSON?.message || 'Error al guardar',
+                    icon: "error"
+                });
+            });
+        }
     });
+});
+
 });
 
 </script>

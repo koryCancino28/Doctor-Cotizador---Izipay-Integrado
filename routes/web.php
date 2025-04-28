@@ -28,4 +28,3 @@ Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.ind
 //cotizacion
 Route::get('/cotizacion', [CotizacionController::class, 'index'])->name('cotizacion.index'); // Mostrar el formulario
 Route::post('/cotizaciones', [CotizacionController::class, 'store'])->name('cotizacion.store');
-
