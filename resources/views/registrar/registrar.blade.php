@@ -112,7 +112,11 @@
         }
 
         .btn-danger:hover {
-            background-color: #fe9d97;
+            background-color:rgb(237, 124, 118);
+        }
+        .btn:hover {
+            transform: scale(1.05); /* Un ligero aumento en tamaño cuando se pasa por encima */
+            transition: transform 0.2s ease; /* Transición suave */
         }
         table#usuariosTable thead th {
             text-align: center;

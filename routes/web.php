@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\Auth\RegisterController;
-
+use App\Http\Controllers\FormulacionController;
 
 Auth::routes();
 
@@ -23,8 +23,14 @@ Route::post('/registrar', [RegisterController::class, 'register'])
     ->middleware('checkRole:Admin,Jefe Proyecto'); 
 
 //CLIENTE
-Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
+Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index')->middleware('checkRole:Admin,Visitadora Medica');
 
 //cotizacion
-Route::get('/cotizacion', [CotizacionController::class, 'index'])->name('cotizacion.index'); // Mostrar el formulario
+Route::get('/cotizacion', [CotizacionController::class, 'index'])->name('cotizacion.index')->middleware('checkRole:Admin,Doctor'); 
 Route::post('/cotizaciones', [CotizacionController::class, 'store'])->name('cotizacion.store');
+
+//FORMULACION CRUD
+Route::resource('formulaciones', FormulacionController::class)
+    ->parameters(['formulaciones' => 'formulacione'])->middleware('checkRole:Admin, Jefe Proyecto'); 
+
+

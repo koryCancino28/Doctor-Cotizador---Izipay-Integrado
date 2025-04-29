@@ -42,6 +42,7 @@ class CotizacionController extends Controller
             ]);
         
             $cotizacionItems = [];
+            $cotizaciones = [];
             foreach ($validated['items'] as $item) {
                 $cotizacion = Cotizacion::create([
                     'cliente_id' => $clienteId,
@@ -50,6 +51,8 @@ class CotizacionController extends Controller
                     'total' => $item['precio'] * $item['cantidad'],
                     'observacion' => $validated['observacion'] ?? null,
                 ]);
+                
+                $cotizaciones[] = $cotizacion; // Guardamos las cotizaciones para usarlas después
                 
                 $formulacion = Formulacion::find($item['id']);
                 $cotizacionItems[] = [
@@ -66,6 +69,15 @@ class CotizacionController extends Controller
             $total = array_sum(array_column($cotizacionItems, 'subtotal'));
             $pdf = $this->generatePDF($cliente, $cotizacionItems, $total, $validated['observacion'] ?? '');
             
+            // Obtener el nombre del archivo PDF generado
+            $pdfFilename = basename($pdf);  // Extraemos solo el nombre del archivo
+            
+            // Ahora, actualizamos todas las cotizaciones relacionadas con la misma formulación
+            foreach ($cotizaciones as $cotizacion) {
+                $cotizacion->pdf_filename = $pdfFilename;
+                $cotizacion->save();
+            }
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Cotización guardada exitosamente',
@@ -81,35 +93,37 @@ class CotizacionController extends Controller
         }
     }
     
+    
     private function generatePDF($cliente, $items, $total, $observacion)
-    {
-        $options = new Options();
-        $options->set('isRemoteEnabled', true);
-        
-        $dompdf = new Dompdf($options);
-        
-        $html = view('cotizacion.pdf', [
-            'cliente' => $cliente,
-            'items' => $items,
-            'total' => $total,
-            'observacion' => $observacion,
-            'fecha' => now()->format('d/m/Y')
-        ])->render();
-        
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-        
-        $output = $dompdf->output();
-        $filename = 'cotizacion_'.time().'.pdf';
-        $path = storage_path('app/public/pdf/'.$filename);
-        
-        if (!file_exists(dirname($path))) {
-            mkdir(dirname($path), 0777, true);
-        }
-        
-        file_put_contents($path, $output);
-        
-        return asset('storage/pdf/'.$filename);
+{
+    $options = new Options();
+    $options->set('isRemoteEnabled', true);
+    
+    $dompdf = new Dompdf($options);
+    
+    $html = view('cotizacion.pdf', [
+        'cliente' => $cliente,
+        'items' => $items,
+        'total' => $total,
+        'observacion' => $observacion,
+        'fecha' => now()->format('d/m/Y')
+    ])->render();
+    
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+    
+    $output = $dompdf->output();
+    $filename = 'cotizacion_'.time().'.pdf';
+    $path = storage_path('app/public/pdf/'.$filename);
+    
+    if (!file_exists(dirname($path))) {
+        mkdir(dirname($path), 0777, true);  // Crear el directorio si no existe
     }
+    
+    file_put_contents($path, $output);
+    
+    return asset('storage/pdf/'.$filename);  // Devolver la URL pública del archivo
+}
+
 }

@@ -132,6 +132,10 @@
         .card-header {
             font-weight: bold;
         }
+        .btn:hover {
+            transform: scale(1.05); /* Un ligero aumento en tamaño cuando se pasa por encima */
+            transition: transform 0.2s ease; /* Transición suave */
+        }
     </style>
 @stop
 

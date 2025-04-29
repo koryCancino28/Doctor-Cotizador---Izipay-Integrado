@@ -10,7 +10,7 @@
 <div class="container" style="background-color:rgb(255, 255, 255); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(254,73,95,0.2);">
 <h1 style="color: #fe495f;text-align: center;"><strong>Mis Formulaciones</strong></h1>
     @unless(auth()->user()->cliente)
-        <p class="text-danger">No tienes formulaciones registradas o no estás logueado como cliente.</p>
+        <p class="text-danger">No tienes formulaciones registradas o no estás logueado como Doctor.</p>
     @else
     <form id="cotizacion-form" action="{{ route('cotizacion.store') }}" method="POST">
         @csrf
