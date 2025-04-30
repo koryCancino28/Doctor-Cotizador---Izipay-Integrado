@@ -81,7 +81,7 @@
         }
 
         table#usuariosTable td {
-            background-color:rgb(255, 255, 241);
+            background-color: rgb(255, 249, 249);
         }
 
         table#usuariosTable thead th {

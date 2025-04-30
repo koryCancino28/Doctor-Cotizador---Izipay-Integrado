@@ -22,19 +22,37 @@ class FormulacionController extends Controller
         return view('formulaciones.create', compact('clientes'));
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
+        // Validación de datos del formulario
         $request->validate([
             'item' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            'precio_publico' => 'required|decimal:0,2',
-            'precio_medico' => 'required|decimal:0,2',
+            'precio_publico' => 'required|numeric',
+            'precio_medico' => 'required|numeric',
             'cliente_id' => 'required|exists:clientes,id',
         ]);
 
-        Formulacion::create($request->all());
+        // Verificar si el item ya existe para el cliente (doctor)
+        $existingFormulation = Formulacion::where('item', $request->item)
+                                        ->where('cliente_id', $request->cliente_id)
+                                        ->first();
 
-        return redirect()->route('formulaciones.index')->with('success', 'Formulación creada correctamente');
+        if ($existingFormulation) {
+            // Si existe, devuelve un error con el mensaje adecuado
+            return back()->withErrors(['item' => 'Este item ya está asignado a este doctor.'])->withInput();
+        }
+
+        // Si no existe, proceder a guardar la formulación
+        $formulation = new Formulacion();
+        $formulation->item = $request->item;
+        $formulation->name = $request->name;
+        $formulation->precio_publico = $request->precio_publico;
+        $formulation->precio_medico = $request->precio_medico;
+        $formulation->cliente_id = $request->cliente_id;
+        $formulation->save();
+
+        return redirect()->route('formulaciones.index')->with('success', 'Formulación creada exitosamente.');
     }
 
     public function show(Formulacion $formulacione)
@@ -57,6 +75,16 @@ class FormulacionController extends Controller
             'precio_medico' => 'required|decimal:0,2',
             'cliente_id' => 'required|exists:clientes,id',
         ]);
+
+        // Verificar si el item ya existe para el cliente (doctor)
+        $existingFormulation = Formulacion::where('item', $request->item)
+                                        ->where('cliente_id', $request->cliente_id)
+                                        ->first();
+
+        if ($existingFormulation) {
+            // Si existe, devuelve un error con el mensaje adecuado
+            return back()->withErrors(['item' => 'El item que ingresó ya está asignado a este doctor.'])->withInput();
+        }
 
         // Actualizar la formulación con los datos del formulario
         $formulacione->update([

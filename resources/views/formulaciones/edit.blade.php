@@ -6,16 +6,18 @@
 @stop
 
 @section('content')
-<div class="container mt-4" style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);">
+<div class="container mt-2" style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);">
     <h1 class="text-center" style="color: #fe495f; font-weight: bold;">{{ isset($formulacione) ? 'Editar Formulación' : 'Crear Nueva Formulación' }}</h1>
 
     <form action="{{ route('formulaciones.update', $formulacione) }}" method="POST">
         @csrf
         @method('PUT')
-
         <div class="form-group">
             <label for="item" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Item</label>
-            <input type="text" class="form-control" id="item" name="item" value="{{ $formulacione->item }}"  required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            <input type="text" class="form-control @error('item') is-invalid @enderror" id="item" name="item" value="{{ $formulacione->item }}"  required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            @error('item')
+                <div style="color:rgb(199, 0, 0);" class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
         <div class="form-group">
@@ -35,7 +37,7 @@
 
         <div class="form-group">
             <label for="cliente_id" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Cliente</label>
-            <select name="cliente_id" id="cliente_id" class="form-control"  required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            <select name="cliente_id" id="cliente_id" class="form-control form-control-lg select2" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
                 @foreach($clientes as $cliente)
                     <option value="{{ $cliente->id }}" {{ $formulacione->cliente_id == $cliente->id ? 'selected' : '' }}>
                         {{ $cliente->nombre }} ({{ $cliente->cmp }})
@@ -57,6 +59,7 @@
 @stop
 
 @section('css')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         .form-group label {
@@ -100,9 +103,40 @@
         .d-flex.justify-content-between {
         gap: 35px; /* Espacio entre botones */
         }
+        .select2-container .select2-selection--single {
+            border: 1px solid #fe495f;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);
+            height: 48px;
+            padding: 8px 12px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #495057;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #fe495f;
+            color: white;
+        }
+
+        .select2-dropdown {
+            border-color: #fe495f;
+            box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);
+        }
     </style>
 @stop
 
 @section('js')
-    <!-- Puedes agregar scripts personalizados aquí si lo necesitas -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#cliente_id').select2({
+                placeholder: "Seleccionar Doctor",
+                allowClear: true,
+                width: '100%' // asegura que se ajuste bien al contenedor
+            });
+        });
+    </script>
 @stop

@@ -139,13 +139,13 @@
         vertical-align: middle;
     }
     /* Asegurar que el texto largo en la columna "Nombre" se ajuste y no se desborde */
-.table-centered td:nth-child(1) {
-    word-wrap: break-word;          
-    overflow-wrap: break-word;      
-    white-space: normal;            
-    max-width: 200px;               
-    word-break: break-word;   /* se dividen las palabras largas */
-}
+    .table-centered td:nth-child(1) {
+        word-wrap: break-word;          
+        overflow-wrap: break-word;      
+        white-space: normal;            
+        max-width: 200px;               
+        word-break: break-word;   /* se dividen las palabras largas */
+    }
 
 </style>
 @stop

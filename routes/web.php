@@ -26,7 +26,7 @@ Route::post('/registrar', [RegisterController::class, 'register'])
 Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index')->middleware('checkRole:Admin,Visitadora Medica');
 
 //cotizacion
-Route::get('/cotizacion', [CotizacionController::class, 'index'])->name('cotizacion.index')->middleware('checkRole:Admin,Doctor'); 
+Route::get('/cotizacion', [CotizacionController::class, 'index'])->name('cotizacion.index')->middleware('checkRole:Doctor'); 
 Route::post('/cotizaciones', [CotizacionController::class, 'store'])->name('cotizacion.store');
 
 //FORMULACION CRUD
