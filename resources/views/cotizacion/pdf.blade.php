@@ -140,7 +140,6 @@
     </div>
 
     <div class="header-right">
-        <div class="subtitle">Especialistas en Fórmulas Magistrales Pediátricas</div>
         <div>Lima, {{ $fecha }}</div>
     </div>
 
