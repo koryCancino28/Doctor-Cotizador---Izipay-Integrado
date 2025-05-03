@@ -18,7 +18,7 @@
                     <div class="card-body">
                         <p><strong style="color:rgb(224, 61, 80);">Item:</strong> {{ $formulacione->item }}</p>
                         <p><strong style="color:rgb(224, 61, 80);">Nombre:</strong> {{ $formulacione->name }}</p>
-                        <p><strong style="color:rgb(224, 61, 80);">Cliente:</strong> {{ $formulacione->cliente->nombre }}</p>
+                        <p><strong style="color:rgb(224, 61, 80);">Doctor:</strong> {{ $formulacione->cliente->nombre }}</p>
                     </div>
                 </div>
             </div>

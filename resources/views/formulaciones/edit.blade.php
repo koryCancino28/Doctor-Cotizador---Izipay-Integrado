@@ -36,7 +36,7 @@
         </div>
 
         <div class="form-group">
-            <label for="cliente_id" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Cliente</label>
+            <label for="cliente_id" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Doctor</label>
             <select name="cliente_id" id="cliente_id" class="form-control form-control-lg select2" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
                 @foreach($clientes as $cliente)
                     <option value="{{ $cliente->id }}" {{ $formulacione->cliente_id == $cliente->id ? 'selected' : '' }}>

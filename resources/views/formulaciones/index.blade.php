@@ -26,7 +26,7 @@
                     <th>Nombre</th>
                     <th>Precio Público</th>
                     <th>Precio Médico</th>
-                    <th>Cliente</th>
+                    <th>Doctor</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
