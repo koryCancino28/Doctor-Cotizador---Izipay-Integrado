@@ -12,10 +12,21 @@ use Dompdf\Options;
 
 class CotizacionController extends Controller
 {
-    public function index()
+        public function index()
     {
-        return view('cotizacion.cotizador');
+        $cliente = auth()->user()->cliente;
+
+        // Si no hay cliente (por ejemplo, no es un doctor), devolvemos la vista sin formulaciones
+        if (!$cliente) {
+            return view('cotizacion.cotizador');
+        }
+
+        // Paginamos las formulaciones del cliente
+        $formulaciones = $cliente->formulaciones()->paginate(5); // Puedes ajustar cuántas mostrar por página
+
+        return view('cotizacion.cotizador', compact('formulaciones'));
     }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -98,7 +109,7 @@ class CotizacionController extends Controller
 {
     $options = new Options();
     $options->set('isRemoteEnabled', true);
-    
+    $options->set('isHtml5ParserEnabled', true);
     $dompdf = new Dompdf($options);
     
     $html = view('cotizacion.pdf', [
@@ -106,7 +117,8 @@ class CotizacionController extends Controller
         'items' => $items,
         'total' => $total,
         'observacion' => $observacion,
-        'fecha' => now()->format('d/m/Y')
+        'fecha' => now()->format('d/m/Y'),
+        'logo' => 'file:///C:/Users/programador%20grobdi/CotizadorDoctor/public/images/logo_grobdi.png' 
     ])->render();
     
     $dompdf->loadHtml($html);

@@ -135,7 +135,7 @@
 
 <div class="header">
     <div class="logo">
-        <img src="" alt="Logo" style="height: 50px;">
+    <img src="{{ $logo }}" alt="Logo Grobdi" style="height: 50px;">
         <div class="subtitle">RUC:20602806023</div>
     </div>
 

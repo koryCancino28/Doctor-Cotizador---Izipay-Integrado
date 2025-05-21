@@ -73,7 +73,8 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach(auth()->user()->cliente->formulaciones as $f)
+            @foreach($formulaciones as $f)
+
             <tr data-id="{{ $f->id }}" data-nombre="{{ $f->name }}" data-precio="{{ $f->precio_publico }}"
                 data-precio-medico="{{ $f->precio_medico }}" style="background-color: rgb(255, 255, 255);">
                 <td>{{ $f->name }}</td>
@@ -86,6 +87,9 @@
 
             </tbody>
         </table>
+        <div class="d-flex justify-content-center mt-4">
+            {!! $formulaciones->appends(request()->except('page'))->links('pagination::bootstrap-5') !!}
+        </div> 
         <button type="submit" class="btn btn-success" style="background-color: #767c94; border: none;">Guardar Cotización</button>
     
     </form>
@@ -170,6 +174,11 @@ $(function() {
     const actualizarResumen = () => {
         let html = '', total = 0;
         
+     const observacion = $('#observacion').val().trim();
+    // Guarda observación junto con el cotizador
+    localStorage.setItem('cotizadorData', JSON.stringify({
+    items: cotizador, observacion: observacion}));
+
         $.each(cotizador, (id, item) => {
             const subtotal = item.precio * item.cantidad;
             total += subtotal;
@@ -219,6 +228,21 @@ $(function() {
         actualizarResumen();
     });
 
+    const savedData = localStorage.getItem('cotizadorData');
+    if (savedData) {
+        try {
+            const parsedData = JSON.parse(savedData);
+            if (parsedData.items) {
+                Object.assign(cotizador, parsedData.items);
+            }
+            if (parsedData.observacion) {
+                $('#observacion').val(parsedData.observacion);
+            }
+            actualizarResumen();
+        } catch (e) {
+            console.error('Error al leer datos del localStorage');
+        }
+    }
     // Manejo del botón de eliminar
     $(document).on('click', '.btn-eliminar', function() {
         const idProducto = $(this).data('id');
@@ -230,73 +254,75 @@ $(function() {
         actualizarResumen();
     });
 
-// Enviar formulario al servidor
-$form.submit(function(e) {
-    e.preventDefault();
+    // Enviar formulario al servidor
+    $form.submit(function(e) {
+        e.preventDefault();
 
-    swalWithBootstrapButtons.fire({
-        title: "¿Seguro que quieres guardar esta cotización?",
-        text: "¡No podrás revertir esta acción!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Sí, guardar",
-        cancelButtonText: "No, cancelar",
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const telefono = $('#telefono').val().trim();
-            const tipoDelivery = $('#tipo_delivery').val();
-            const direccion = $('#direccion').val().trim();
-            const observacion = $('#observacion').val().trim();
+        swalWithBootstrapButtons.fire({
+            title: "¿Seguro que quieres guardar esta cotización?",
+            text: "¡No podrás revertir esta acción!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "No, cancelar",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const telefono = $('#telefono').val().trim();
+                const tipoDelivery = $('#tipo_delivery').val();
+                const direccion = $('#direccion').val().trim();
+                const observacion = $('#observacion').val().trim();
 
-            if (!telefono || !tipoDelivery || !direccion) {
-                swalWithBootstrapButtons.fire({
-                    title: "Error",
-                    text: "Por favor complete todos los datos de envío.",
-                    icon: "error"
-                });
-                return;
-            }
+                if (!telefono || !tipoDelivery || !direccion) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Error",
+                        text: "Por favor complete todos los datos de envío.",
+                        icon: "error"
+                    });
+                    return;
+                }
 
-            $.post($form.attr('action'), {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                items: Object.values(cotizador),
-                telefono: telefono,
-                tipo_delivery: tipoDelivery,
-                direccion: direccion,
-                observacion: observacion 
-            }).done(res => {
-                swalWithBootstrapButtons.fire({
-                    title: "¡Guardado!",
-                    text: "¡Cotización guardada exitosamente!",
-                    icon: "success"
-                }).then(() => {
-                    // URL del PDF generado en el backend
-                    const pdfUrl = res.pdf_url;
+                $.post($form.attr('action'), {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    items: Object.values(cotizador),
+                    telefono: telefono,
+                    tipo_delivery: tipoDelivery,
+                    direccion: direccion,
+                    observacion: observacion 
+                }).done(res => {
+                    localStorage.removeItem('cotizadorData');
+
+                    swalWithBootstrapButtons.fire({
+                        title: "¡Guardado!",
+                        text: "¡Cotización guardada exitosamente!",
+                        icon: "success"
+                    }).then(() => {
+                        // URL del PDF generado en el backend
+                        const pdfUrl = res.pdf_url;
+                        
+                        // Crear un enlace para forzar la descarga
+                        const link = document.createElement('a');
+                        link.href = pdfUrl;
+                        link.download = 'Cotizacion Grobdi.pdf';  // Nombre que se dará al archivo descargado
+                        link.click();  // Simula el clic en el enlace para descargar el archivo
+
+                        // Limpiar el cotizador
+                        Object.keys(cotizador).forEach(k => delete cotizador[k]);
+                        actualizarResumen();
+                    });
                     
-                    // Crear un enlace para forzar la descarga
-                    const link = document.createElement('a');
-                    link.href = pdfUrl;
-                    link.download = 'Cotizacion Grobdi.pdf';  // Nombre que se dará al archivo descargado
-                    link.click();  // Simula el clic en el enlace para descargar el archivo
-
-                    // Limpiar el cotizador
-                    Object.keys(cotizador).forEach(k => delete cotizador[k]);
-                    actualizarResumen();
+                }).fail(err => {
+                    swalWithBootstrapButtons.fire({
+                        title: "Error",
+                        text: err.responseJSON?.message || 'Error al guardar',
+                        icon: "error"
+                    });
                 });
-                
-            }).fail(err => {
-                swalWithBootstrapButtons.fire({
-                    title: "Error",
-                    text: err.responseJSON?.message || 'Error al guardar',
-                    icon: "error"
-                });
-            });
-        }
+            }
+        });
     });
-});
 
-});
+    });
 
 </script>
 @stop

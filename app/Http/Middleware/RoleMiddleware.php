@@ -23,11 +23,9 @@ class RoleMiddleware
                     return $next($request); // Si el rol coincide, permite el acceso
                 }
             }
-            
             // Si no coincide con ninguno de los roles, deniega el acceso
             return redirect('/')->with('error', 'Acceso denegado');
         }
-
         // Si el usuario no está autenticado, redirigir al login
         return redirect('login');
     }
