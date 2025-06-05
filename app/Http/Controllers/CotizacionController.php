@@ -22,7 +22,7 @@ class CotizacionController extends Controller
         }
 
         // Paginamos las formulaciones del cliente
-        $formulaciones = $cliente->formulaciones()->paginate(5); // Puedes ajustar cuántas mostrar por página
+        $formulaciones = $cliente->formulaciones()->paginate(5); 
 
         return view('cotizacion.cotizador', compact('formulaciones'));
     }
@@ -63,7 +63,7 @@ class CotizacionController extends Controller
                     'observacion' => $validated['observacion'] ?? null,
                 ]);
                 
-                $cotizaciones[] = $cotizacion; // Guardamos las cotizaciones para usarlas después
+                $cotizaciones[] = $cotizacion; 
                 
                 $formulacion = Formulacion::find($item['id']);
                 $cotizacionItems[] = [
@@ -104,38 +104,59 @@ class CotizacionController extends Controller
         }
     }
     
-    
-    private function generatePDF($cliente, $items, $total, $observacion)
-{
-    $options = new Options();
-    $options->set('isRemoteEnabled', true);
-    $options->set('isHtml5ParserEnabled', true);
-    $dompdf = new Dompdf($options);
-    
-    $html = view('cotizacion.pdf', [
-        'cliente' => $cliente,
-        'items' => $items,
-        'total' => $total,
-        'observacion' => $observacion,
-        'fecha' => now()->format('d/m/Y'),
-        'logo' => 'file:///C:/Users/programador%20grobdi/CotizadorDoctor/public/images/logo_grobdi.png' 
-    ])->render();
-    
-    $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'portrait');
-    $dompdf->render();
-    
-    $output = $dompdf->output();
-    $filename = 'cotizacion_'.time().'.pdf';
-    $path = storage_path('app/public/pdf/'.$filename);
-    
-    if (!file_exists(dirname($path))) {
-        mkdir(dirname($path), 0777, true);  // Crear el directorio si no existe
+        private function generatePDF($cliente, $items, $total, $observacion)
+    {
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+        $dompdf = new Dompdf($options);
+        
+        $html = view('cotizacion.pdf', [
+            'cliente' => $cliente,
+            'items' => $items,
+            'total' => $total,
+            'observacion' => $observacion,
+            'fecha' => now()->format('d/m/Y'),
+            $logoPath = public_path('images/logo_grobdi.png'),
+            $logoData = base64_encode(file_get_contents($logoPath)),
+            $logo = 'data:image/png;base64,' . $logoData,
+            'logo' => $logo
+        ])->render();
+        
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        $output = $dompdf->output();
+        $filename = 'cotizacion_'.time().'.pdf';
+        $path = storage_path('app/public/pdf/'.$filename);
+        
+        if (!file_exists(dirname($path))) {
+            mkdir(dirname($path), 0777, true);  // Crear el directorio si no existe
+        }
+        
+        file_put_contents($path, $output);
+        
+        return asset('storage/pdf/'.$filename);  // Devolver la URL pública del archivo
     }
-    
-    file_put_contents($path, $output);
-    
-    return asset('storage/pdf/'.$filename);  // Devolver la URL pública del archivo
-}
+
+        public function misCotizaciones()
+    {
+        $cliente = auth()->user()->cliente;
+
+        if (!$cliente) {
+            return redirect()->back()->with('error', 'No tienes cotizaciones porque no eres cliente.');
+        }
+
+        // Agrupar cotizaciones por PDF generado
+        $cotizaciones = Cotizacion::with('formulacion')
+            ->where('cliente_id', $cliente->id)
+            ->whereNotNull('pdf_filename')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('pdf_filename');
+
+        return view('cotizacion.mis_cotizaciones', compact('cotizaciones'));
+    }
 
 }

@@ -24,7 +24,6 @@ class FormulacionController extends Controller
 
         public function store(Request $request)
     {
-        // Validación de datos del formulario
         $request->validate([
             'item' => 'required|string|max:255',
             'name' => 'required|string|max:255',
@@ -33,17 +32,14 @@ class FormulacionController extends Controller
             'cliente_id' => 'required|exists:clientes,id',
         ]);
 
-        // Verificar si el item ya existe para el cliente (doctor)
         $existingFormulation = Formulacion::where('item', $request->item)
                                         ->where('cliente_id', $request->cliente_id)
                                         ->first();
 
         if ($existingFormulation) {
-            // Si existe, devuelve un error con el mensaje adecuado
             return back()->withErrors(['item' => 'Este item ya está asignado a este doctor.'])->withInput();
         }
 
-        // Si no existe, proceder a guardar la formulación
         $formulation = new Formulacion();
         $formulation->item = $request->item;
         $formulation->name = $request->name;

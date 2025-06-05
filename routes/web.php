@@ -33,4 +33,7 @@ Route::post('/cotizaciones', [CotizacionController::class, 'store'])->name('coti
 Route::resource('formulaciones', FormulacionController::class)
     ->parameters(['formulaciones' => 'formulacione'])->middleware('checkRole:Admin, Jefe Proyecto'); 
 
-
+//COTIZACIONES DE CADA DOCTOR
+Route::middleware(['auth'])->group(function () {
+    Route::get('mis-cotizaciones', [CotizacionController::class, 'misCotizaciones'])->name('cotizacion.mis');
+});

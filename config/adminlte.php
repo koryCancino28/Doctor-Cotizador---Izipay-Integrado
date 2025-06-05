@@ -347,10 +347,15 @@ return [
         [
             'text' => 'Cotizador',
             'url' => '/cotizacion',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-file-invoice-dollar',
             'can' => 'Doctores',
         ],
-       
+        [
+            'text' => 'Mis Cotizaciones',
+            'url' => 'mis-cotizaciones',
+            'icon' => 'fas fa-fw fa-file',
+            'can' => 'Doctores',
+        ],
         //SIDEBAR JEFE PROYECTOS
         [
             'header' => 'FORMULACIONES',
@@ -369,13 +374,13 @@ return [
             'icon' => 'fas fa-fw fa-user',
             'can' => 'Jefe Proyectos',
         ],
-        //otros tipo del sidebar
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        // [
+        ////otros tipo del sidebar
+        //[
+        //    'text' => 'change_password',
+        //    'url' => 'admin/settings',
+        //    'icon' => 'fas fa-fw fa-lock',
+        //],
+        //// [
         //     'text' => 'multilevel',
         //     'icon' => 'fas fa-fw fa-share',
         //     'submenu' => [
@@ -413,22 +418,22 @@ return [
         //         ],
         //     ],
         // ],
-        ['header' => 'labels'],
-        [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ],
+        //['header' => 'labels'],
+        //[
+        //    'text' => 'important',
+        //    'icon_color' => 'red',
+        //    'url' => '#',
+        //],
+        //[
+        //    'text' => 'warning',
+        //    'icon_color' => 'yellow',
+        //    'url' => '#',
+        //],
+        //[
+        //    'text' => 'information',
+        //    'icon_color' => 'cyan',
+        //    'url' => '#',
+        //],
     ],
 
     /*

@@ -17,27 +17,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            background-color: white;
-            color: dark;
-            position: relative;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .header-section {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
         }
 
         .logo {
-            flex: 1;
             text-align: left;
         }
 
-        .header-center {
+        .center {
             text-align: center;
-            flex: 2;
-            line-height: 1.2;
+            font-weight: bold;
+            font-size: 18px;
         }
 
-        .header-right {
+        .right {
             text-align: right;
-            flex: 1;
         }
+
 
         .title {
             font-size: 28px;
@@ -46,9 +50,10 @@
         }
 
         .subtitle {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: normal;
-            white-space: pre-line; /* Esto permite que el texto se divida en varias líneas */
+            white-space: pre-line; 
+            color: #999;
         }
 
         .section {
@@ -134,17 +139,17 @@
 <body>
 
 <div class="header">
-    <div class="logo">
-    <img src="{{ $logo }}" alt="Logo Grobdi" style="height: 50px;">
+    <div class="header-section logo">
+        <img src="{{ $logo }}" alt="Logo Grobdi" style="height: 30px;">
         <div class="subtitle">RUC:20602806023</div>
     </div>
 
-    <div class="header-right">
-        <div>Lima, {{ $fecha }}</div>
+    <div class="header-section center">
+        <div class="title">PROFORMA DR. {{ strtoupper(Str::of($cliente->user->name)->explode(' ')->first()) }}</div>
     </div>
 
-    <div class="header-center">
-        <div class="title">PROFORMA DR. {{ strtoupper($cliente->user->name) }}</div>
+    <div class="header-section right">
+        <div>Lima, {{ $fecha }}</div>
     </div>
 </div>
 
@@ -225,8 +230,8 @@
 <!-- Footer -->
 <div class="footer">
     <p><strong>Gracias por su preferencia.</strong></p>
-    <p><strong>Nota:</strong> Los precios incluyen el IGV. <br>
-        Condiciones de pago: Transferencia bancaria. <br>
+    <p><strong>Nota:</strong> Los precios incluyen el IGV. 
+        Condiciones de pago: Transferencia bancaria. 
         Entrega: Según coordinación previa.</p>
     <p>© {{ date('Y') }} - Todos los derechos reservados.</p>
 </div>

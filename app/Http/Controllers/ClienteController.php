@@ -14,7 +14,7 @@ class ClienteController extends Controller
                   ->from('cotizaciones')
                   ->whereNotNull('pdf_filename')
                   ->groupBy('pdf_filename'); // Subconsulta para obtener una cotización por cada pdf_filename único
-        });
+        })->orderBy('id', 'desc');
     }])->get();
 
 
