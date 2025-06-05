@@ -335,7 +335,7 @@ return [
         [
             'text' => 'Doctores',
             'url' => '/clientes',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-stethoscope',
             'can' => 'Visitadoras',
         ],
         
@@ -364,14 +364,14 @@ return [
         [
             'text' => 'Formulaciones',
             'url' => 'formulaciones',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-flask',
             'can'=> 'Jefe Proyectos',
         ],
 
         [
             'text' => 'Registrar Usuarios',
             'url' => 'usuarios',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-users',
             'can' => 'Jefe Proyectos',
         ],
         ////otros tipo del sidebar
