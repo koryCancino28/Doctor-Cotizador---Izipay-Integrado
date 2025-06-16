@@ -164,8 +164,6 @@ $(function() {
     const cotizador = {};  // Objeto que almacenará las formulaciones seleccionadas
     const $form = $('#cotizacion-form');
     
-    // 1. Clave única para el almacenamiento
-    // Si hay un usuario autenticado, usa su ID, de lo contrario usa sessionStorage
      const userId = window.currentUserId; 
     const storageKey = `cotizadorData_${userId}`;
 

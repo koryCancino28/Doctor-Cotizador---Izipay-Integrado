@@ -30,8 +30,8 @@
                         <h5><i class="bi bi-cash" style="margin-right: 6px;"></i> Precios</h5>
                     </div>
                     <div class="card-body">
-                        <p><strong style="color:rgb(224, 61, 80);">Precio Público:</strong> ${{ number_format($formulacione->precio_publico, 2) }}</p>
-                        <p><strong style="color:rgb(224, 61, 80);">Precio Médico:</strong> ${{ number_format($formulacione->precio_medico, 2) }}</p>
+                        <p><strong style="color:rgb(224, 61, 80);">Precio Público:</strong> S/ {{ number_format($formulacione->precio_publico, 2) }}</p>
+                        <p><strong style="color:rgb(224, 61, 80);">Precio Médico:</strong> S/ {{ number_format($formulacione->precio_medico, 2) }}</p>
                     </div>
                 </div>
             </div>

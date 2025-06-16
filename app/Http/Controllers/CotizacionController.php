@@ -125,7 +125,6 @@ class CotizacionController extends Controller
         $logoData = base64_encode(file_get_contents($logoPath));
         $logo = 'data:image/png;base64,' . $logoData;
 
-        // Renderizar la vista HTML para el PDF
         $html = view('cotizacion.pdf', [
             'cliente' => $cliente,
             'items' => $items,
@@ -140,9 +139,9 @@ class CotizacionController extends Controller
         $dompdf->render();
 
         $output = $dompdf->output();
-        $filename = 'cotizacion_' . time() . '.pdf';
+        $filename = 'cotizacion - Dr.' .$cliente->id.' - '. time() . '.pdf';
 
-        // 📂 Guardar en public/pdf (directamente accesible por navegador)
+        // 📂 Guardar en public/pdf 
         $relativePath = 'pdf';
         $fullPath = public_path($relativePath);
 

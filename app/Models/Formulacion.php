@@ -20,4 +20,8 @@ class Formulacion extends Model
     {
         return $this->hasMany(Cotizacion::class, 'formulacion_id');
     }
+        public function detalleCotizaciones()
+    {
+        return $this->hasMany(DetalleCotizacion::class);
+    }
 }

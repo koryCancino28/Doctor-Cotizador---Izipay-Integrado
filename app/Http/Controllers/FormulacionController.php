@@ -94,9 +94,25 @@ class FormulacionController extends Controller
         return redirect()->route('formulaciones.index')->with('success', 'Formulación actualizada correctamente');
     }
 
-    public function destroy(Formulacion $formulacione)
+        public function destroy(Formulacion $formulacione)
     {
+        $hasRelations = $formulacione->detalleCotizaciones()->exists();
+        
+        if ($hasRelations) {
+            return view('formulaciones.forzar', compact('formulacione', 'hasRelations'));
+        }
+        
         $formulacione->delete();
-        return redirect()->route('formulaciones.index')->with('success', 'Formulación eliminada correctamente');
+        return redirect()->route('formulaciones.index')
+            ->with('success', 'Formulación eliminada correctamente');
+    }
+
+    public function forceDestroy(Formulacion $formulacione)
+    {
+        $formulacione->detalleCotizaciones()->delete();
+        $formulacione->delete();
+        
+        return redirect()->route('formulaciones.index')
+            ->with('success', 'Formulación y sus relaciones eliminadas correctamente');
     }
 }

@@ -45,7 +45,7 @@
                                 <form action="{{ route('formulaciones.destroy', $formulacion) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" style="background-color: #dc3545; border-color: #dc3545;"><i class="fa-solid fa-trash"></i>Eliminar</button>
+                                    <button type="submit" class="btn btn-danger btn-sm" style="background-color: #dc3545; border-color: #dc3545;" onclick="return confirm('¿Eliminar esta formulación?')"><i class="fa-solid fa-trash"></i>Eliminar</button>
                                 </form>
                             </div>
                         </td>

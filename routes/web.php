@@ -37,3 +37,5 @@ Route::resource('formulaciones', FormulacionController::class)
 Route::middleware(['auth'])->group(function () {
     Route::get('mis-cotizaciones', [CotizacionController::class, 'misCotizaciones'])->name('cotizacion.mis');
 });
+Route::delete('/formulaciones/{formulacione}/force', [FormulacionController::class, 'forceDestroy'])
+     ->name('formulaciones.forceDestroy');
