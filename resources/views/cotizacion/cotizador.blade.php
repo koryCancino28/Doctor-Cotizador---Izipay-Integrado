@@ -157,10 +157,29 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    window.currentUserId = {{ Auth::id() }}; // ID del usuario autenticado
+</script>
+<script>
 $(function() {
     const cotizador = {};  // Objeto que almacenará las formulaciones seleccionadas
     const $form = $('#cotizacion-form');
     
+    // 1. Clave única para el almacenamiento
+    // Si hay un usuario autenticado, usa su ID, de lo contrario usa sessionStorage
+     const userId = window.currentUserId; 
+    const storageKey = `cotizadorData_${userId}`;
+
+     function getStorage() {
+        return localStorage.getItem(storageKey);
+    }
+    
+    function clearStorage() {
+        localStorage.removeItem(storageKey);
+    }
+    
+    function setStorage(data) {
+        localStorage.setItem(storageKey, data);
+    }
     // Inicialización de SweetAlert2 con los botones personalizados
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -175,9 +194,12 @@ $(function() {
         let html = '', total = 0;
         
      const observacion = $('#observacion').val().trim();
-    // Guarda observación junto con el cotizador
-    localStorage.setItem('cotizadorData', JSON.stringify({
-    items: cotizador, observacion: observacion}));
+    setStorage(JSON.stringify({
+            items: cotizador, 
+            observacion: observacion,
+            timestamp: new Date().getTime(),
+            userId: userId // Añadimos el userId para verificación adicional
+        }));
 
         $.each(cotizador, (id, item) => {
             const subtotal = item.precio * item.cantidad;
@@ -228,7 +250,7 @@ $(function() {
         actualizarResumen();
     });
 
-    const savedData = localStorage.getItem('cotizadorData');
+     const savedData = getStorage();
     if (savedData) {
         try {
             const parsedData = JSON.parse(savedData);
@@ -240,9 +262,11 @@ $(function() {
             }
             actualizarResumen();
         } catch (e) {
-            console.error('Error al leer datos del localStorage');
+            console.error('Error al cargar datos guardados', e);
+            clearStorage();
         }
     }
+
     // Manejo del botón de eliminar
     $(document).on('click', '.btn-eliminar', function() {
         const idProducto = $(this).data('id');
@@ -290,7 +314,7 @@ $(function() {
                     direccion: direccion,
                     observacion: observacion 
                 }).done(res => {
-                    localStorage.removeItem('cotizadorData');
+                    clearStorage(); 
 
                     swalWithBootstrapButtons.fire({
                         title: "¡Guardado!",

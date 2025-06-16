@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cotizaciones', function (Blueprint $table) {
+        Schema::create('detalle_cotizacion', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade'); 
-            $table->decimal('total', 8, 2); 
-            $table->string('pdf_filename')->nullable();
-            $table->text('observacion')->nullable();
+            $table->foreignId('cotizacion_id')->constrained('cotizaciones')->onDelete('cascade'); 
+            $table->foreignId('formulacion_id')->constrained('formulacions')->onDelete('cascade'); 
+            $table->integer('cantidad'); // Cantidad seleccionada por el cliente
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cotizaciones');
+        Schema::dropIfExists('detalle_cotizacion');
     }
 };

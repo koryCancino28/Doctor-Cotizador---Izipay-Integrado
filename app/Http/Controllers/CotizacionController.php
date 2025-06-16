@@ -27,7 +27,7 @@ class CotizacionController extends Controller
         return view('cotizacion.cotizador', compact('formulaciones'));
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
         $validated = $request->validate([
             'items' => 'required|array|min:1',
@@ -39,62 +39,70 @@ class CotizacionController extends Controller
             'direccion' => 'required|string|max:255',
             'observacion' => 'nullable|string|max:500',
         ]);
-        
+
         try {
             DB::beginTransaction();
-            
+
             $cliente = auth()->user()->cliente()->firstOrFail();
-            $clienteId = $cliente->id;
-        
+
+            // Actualizamos info del cliente
             $cliente->update([
                 'telefono' => $validated['telefono'],
                 'tipo_delivery' => $validated['tipo_delivery'],
                 'direccion' => $validated['direccion']
             ]);
-        
-            $cotizacionItems = [];
-            $cotizaciones = [];
+
+            // Calculamos total
+            $total = 0;
             foreach ($validated['items'] as $item) {
-                $cotizacion = Cotizacion::create([
-                    'cliente_id' => $clienteId,
+                $total += $item['precio'] * $item['cantidad'];
+            }
+
+            // Creamos la cotización (cabecera)
+            $cotizacion = Cotizacion::create([
+                'cliente_id' => $cliente->id,
+                'total' => $total,
+                'observacion' => $validated['observacion'] ?? null,
+            ]);
+
+            $cotizacionItems = [];
+
+            foreach ($validated['items'] as $item) {
+                // Guardamos en detalle_cotizacion
+                DB::table('detalle_cotizacion')->insert([
+                    'cotizacion_id' => $cotizacion->id,
                     'formulacion_id' => $item['id'],
                     'cantidad' => $item['cantidad'],
-                    'total' => $item['precio'] * $item['cantidad'],
-                    'observacion' => $validated['observacion'] ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
-                
-                $cotizaciones[] = $cotizacion; 
-                
+
+                // Para generar el PDF
                 $formulacion = Formulacion::find($item['id']);
                 $cotizacionItems[] = [
                     'nombre' => $formulacion->name,
                     'cantidad' => $item['cantidad'],
                     'precio' => $item['precio'],
-                    'subtotal' => $item['precio'] * $item['cantidad']
+                    'subtotal' => $item['precio'] * $item['cantidad'],
                 ];
             }
-        
+
+            // Generamos PDF
+            $pdfUrl = $this->generatePDF($cliente, $cotizacionItems, $total, $validated['observacion'] ?? '');
+
+            // Guardamos el nombre del archivo PDF en la cabecera
+            $pdfFilename = basename($pdfUrl);
+            $cotizacion->pdf_filename = $pdfFilename;
+            $cotizacion->save();
+
             DB::commit();
-            
-            // Generar PDF
-            $total = array_sum(array_column($cotizacionItems, 'subtotal'));
-            $pdf = $this->generatePDF($cliente, $cotizacionItems, $total, $validated['observacion'] ?? '');
-            
-            // Obtener el nombre del archivo PDF generado
-            $pdfFilename = basename($pdf);  // Extraemos solo el nombre del archivo
-            
-            // Ahora, actualizamos todas las cotizaciones relacionadas con la misma formulación
-            foreach ($cotizaciones as $cotizacion) {
-                $cotizacion->pdf_filename = $pdfFilename;
-                $cotizacion->save();
-            }
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Cotización guardada exitosamente',
-                'pdf_url' => $pdf
+                'pdf_url' => $pdfUrl
             ]);
-        
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -103,6 +111,7 @@ class CotizacionController extends Controller
             ], 500);
         }
     }
+
     
         private function generatePDF($cliente, $items, $total, $observacion)
     {
@@ -110,37 +119,45 @@ class CotizacionController extends Controller
         $options->set('isRemoteEnabled', true);
         $options->set('isHtml5ParserEnabled', true);
         $dompdf = new Dompdf($options);
-        
+
+        // Obtener el logo
+        $logoPath = public_path('images/logo_grobdi.png');
+        $logoData = base64_encode(file_get_contents($logoPath));
+        $logo = 'data:image/png;base64,' . $logoData;
+
+        // Renderizar la vista HTML para el PDF
         $html = view('cotizacion.pdf', [
             'cliente' => $cliente,
             'items' => $items,
             'total' => $total,
             'observacion' => $observacion,
             'fecha' => now()->format('d/m/Y'),
-            $logoPath = public_path('images/logo_grobdi.png'),
-            $logoData = base64_encode(file_get_contents($logoPath)),
-            $logo = 'data:image/png;base64,' . $logoData,
             'logo' => $logo
         ])->render();
-        
+
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
-        
+
         $output = $dompdf->output();
-        $filename = 'cotizacion_'.time().'.pdf';
-        $path = storage_path('app/public/pdf/'.$filename);
-        
-        if (!file_exists(dirname($path))) {
-            mkdir(dirname($path), 0777, true);  // Crear el directorio si no existe
+        $filename = 'cotizacion_' . time() . '.pdf';
+
+        // 📂 Guardar en public/pdf (directamente accesible por navegador)
+        $relativePath = 'pdf';
+        $fullPath = public_path($relativePath);
+
+        if (!file_exists($fullPath)) {
+            mkdir($fullPath, 0775, true); // Crear carpeta si no existe
         }
-        
-        file_put_contents($path, $output);
-        
-        return asset('storage/pdf/'.$filename);  // Devolver la URL pública del archivo
+
+        file_put_contents($fullPath . '/' . $filename, $output);
+
+        // 🌐 Devolver URL pública
+        return asset($relativePath . '/' . $filename);
     }
 
-        public function misCotizaciones()
+
+            public function misCotizaciones()
     {
         $cliente = auth()->user()->cliente;
 
@@ -148,15 +165,15 @@ class CotizacionController extends Controller
             return redirect()->back()->with('error', 'No tienes cotizaciones porque no eres cliente.');
         }
 
-        // Agrupar cotizaciones por PDF generado
-        $cotizaciones = Cotizacion::with('formulacion')
+        // Cargar cotizaciones con sus detalles y formulaciones
+        $cotizaciones = Cotizacion::with(['detalles.formulacion'])
             ->where('cliente_id', $cliente->id)
             ->whereNotNull('pdf_filename')
             ->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy('pdf_filename');
+            ->get();
 
         return view('cotizacion.mis_cotizaciones', compact('cotizaciones'));
     }
+
 
 }

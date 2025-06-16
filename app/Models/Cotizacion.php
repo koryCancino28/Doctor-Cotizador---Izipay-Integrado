@@ -12,13 +12,15 @@ class Cotizacion extends Model
 
     protected $fillable = ['cliente_id', 'formulacion_id', 'cantidad', 'total', 'observacion', 'pdf_filename'];
 
-    public function cliente()
+    // App\Models\Cotizacion.php
+
+    public function detalles()
     {
-        return $this->belongsTo(Cliente::class, 'cliente_id');
+        return $this->hasMany(DetalleCotizacion::class);
     }
 
-    public function formulacion()
+    public function cliente()
     {
-        return $this->belongsTo(Formulacion::class, 'formulacion_id');
-    }
+        return $this->belongsTo(Cliente::class);
+    } 
 }

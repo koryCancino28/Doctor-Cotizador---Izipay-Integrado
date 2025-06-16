@@ -40,20 +40,20 @@
                             <td>{{ $cliente->telefono }}</td>
                             <td>
                                 @php
-                                    // Ruta completa del archivo
-                                    $pdfPath = storage_path('app/public/pdf/'.$cotizacion->pdf_filename);
+                                    $pdfFilename = $cotizacion->pdf_filename;
+                                    $pdfPath = public_path('pdf/' . $pdfFilename);
                                 @endphp
 
-                                @if($cotizacion->pdf_filename && file_exists($pdfPath))
-                                    <a href="{{ url('storage/pdf/'.$cotizacion->pdf_filename) }}" 
-                                    class="btn btn-s btn-sm" 
-                                    target="_blank"><i class="fas fa-download"></i>
-                                    Descargar PDF
+                                @if($pdfFilename && file_exists($pdfPath))
+                                    <a href="{{ asset('pdf/' . $pdfFilename) }}"
+                                    class="btn btn-s btn-sm"
+                                    target="_blank">
+                                        <i class="fas fa-download"></i> Descargar PDF
                                     </a>
                                 @else
                                     <button class="btn btn-warning btn-sm" disabled>PDF no disponible</button>
-                                    @if($cotizacion->pdf_filename)
-                                        <small class="text-muted">(Archivo existe pero no es accesible)</small>
+                                    @if($pdfFilename)
+                                        <small class="text-muted">(Archivo no encontrado)</small>
                                     @endif
                                 @endif
                             </td>
