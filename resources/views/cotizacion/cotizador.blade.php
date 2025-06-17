@@ -61,32 +61,34 @@
             </div>
         </div>
 
-        <!-- Tabla de Formulaciones -->
-        <table class="table table-bordered table-centered" style="background-color: rgb(255, 255, 255); border-color: #fe495f;">
-            <thead>
-                <tr style="background-color: #fe495f; color: white;">
-                    <th>Nombre</th>
-                    <th>Precio Unidad <br>(De 7 a menos)</th>
-                    <th>Precio Unidad <br>(De 8 a más)</th>
-                    <th>Cantidad</th>
-                    <th>Acción</th>
+        <div style="overflow-x: auto; width: 100%;">
+            <!-- Tabla de Formulaciones -->
+            <table class="table table-bordered table-centered" style="background-color: rgb(255, 255, 255); border-color: #fe495f;">
+                <thead>
+                    <tr style="background-color: #fe495f; color: white;">
+                        <th>Nombre</th>
+                        <th>Precio Unidad <br>(De 7 a menos)</th>
+                        <th>Precio Unidad <br>(De 8 a más)</th>
+                        <th>Cantidad</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach($formulaciones as $f)
+
+                <tr data-id="{{ $f->id }}" data-nombre="{{ $f->name }}" data-precio="{{ $f->precio_publico }}"
+                    data-precio-medico="{{ $f->precio_medico }}" style="background-color: rgb(255, 255, 255);">
+                    <td>{{ $f->name }}</td>
+                    <td>S/ {{ number_format($f->precio_publico, 2) }}</td>
+                    <td>S/ {{ number_format($f->precio_medico, 2) }}</td>
+                    <td><input type="number" class="form-control cantidad-input" value="1" min="1" style="width:80px; border-color: #fe495f; text-align: center; display: block; margin: 0 auto;"></td>
+                    <td><button type="button" class="btn btn-primary btn-sm btn-agregar" style="background-color: #767c94; border: none;">Agregar</button></td>
                 </tr>
-            </thead>
-            <tbody>
-            @foreach($formulaciones as $f)
+                @endforeach
 
-            <tr data-id="{{ $f->id }}" data-nombre="{{ $f->name }}" data-precio="{{ $f->precio_publico }}"
-                data-precio-medico="{{ $f->precio_medico }}" style="background-color: rgb(255, 255, 255);">
-                <td>{{ $f->name }}</td>
-                <td>S/ {{ number_format($f->precio_publico, 2) }}</td>
-                <td>S/ {{ number_format($f->precio_medico, 2) }}</td>
-                <td><input type="number" class="form-control cantidad-input" value="1" min="1" style="width:80px; border-color: #fe495f; text-align: center; display: block; margin: 0 auto;"></td>
-                <td><button type="button" class="btn btn-primary btn-sm btn-agregar" style="background-color: #767c94; border: none;">Agregar</button></td>
-            </tr>
-            @endforeach
-
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
         <div class="d-flex justify-content-center mt-4">
             {!! $formulaciones->appends(request()->except('page'))->links('pagination::bootstrap-5') !!}
         </div> 
@@ -95,24 +97,26 @@
     </form>
 
     <h3 class="mt-4" style="color: #fe495f;">Resumen</h3>
-    <table class="table table-striped table-centered" style="background-color: rgb(255, 255, 241); border-color: #fe495f;">
-        <thead>
-            <tr style="background-color: #fe495f; color: white;">
-                <th>Formulación</th>
-                <th>Cantidad</th>
-                <th>Precio</th>
-                <th>Subtotal</th>
-                <th style="width: 100px; text-align: center;">Acción</th>
-            </tr>
-        </thead>
-        <tbody id="resumen-body"></tbody>
-        <tfoot>
-            <tr style="background-color: #fe9d97; color: white;">
-                <th colspan="3">Total</th>
-                <th id="total">S/ 0.00</th>
-            </tr>
-        </tfoot>
-    </table>
+    <div style="overflow-x: auto; width: 100%;">
+        <table class="table table-striped table-centered" style="background-color: rgb(255, 255, 241); border-color: #fe495f;">
+            <thead>
+                <tr style="background-color: #fe495f; color: white;">
+                    <th>Formulación</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th style="width: 100px; text-align: center;">Acción</th>
+                </tr>
+            </thead>
+            <tbody id="resumen-body"></tbody>
+            <tfoot>
+                <tr style="background-color: #fe9d97; color: white;">
+                    <th colspan="3">Total</th>
+                    <th id="total">S/ 0.00</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
     @endunless
 </div>
 @stop
@@ -164,6 +168,7 @@ $(function() {
     const cotizador = {};  // Objeto que almacenará las formulaciones seleccionadas
     const $form = $('#cotizacion-form');
     
+
      const userId = window.currentUserId; 
     const storageKey = `cotizadorData_${userId}`;
 
