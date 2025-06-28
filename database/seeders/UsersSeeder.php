@@ -19,12 +19,14 @@ class UsersSeeder extends Seeder
         // Crear un usuario
         User::create([
             'name' => 'Sistemas',
+            'last_name' => 'Grobdi',
             'email' => 'sistemas@grobdi.com',
             'password' => Hash::make('12345678'), // Usando bcrypt para encriptar la contraseña
             'role_id' => 1,  
         ]);
         User::create([
-            'name' => 'Cristopher Alcantara',
+            'name' => 'Cristopher',
+            'last_name' => 'Alcantara',
             'email' => 'jefe.proyectos@grobdi.com',
             'password' => Hash::make('12345678'), // Usando bcrypt para encriptar la contraseña
             'role_id' => 2,  

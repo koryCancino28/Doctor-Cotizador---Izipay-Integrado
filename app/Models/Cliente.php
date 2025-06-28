@@ -9,7 +9,14 @@ class Cliente extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'cmp', 'tipo_delivery', 'user_id', 'telefono', 'direccion'];
+    protected $fillable = ['nombre', 'cmp', 'tipo_delivery', 'user_id', 'telefono', 'direccion', 'visitadora_id'];
+    
+    // Relación con la visitadora médica (usuario con role_id=3)
+    public function visitadora()
+    {
+        return $this->belongsTo(User::class, 'visitadora_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

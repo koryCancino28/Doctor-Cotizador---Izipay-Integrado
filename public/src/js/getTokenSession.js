@@ -1,3 +1,4 @@
+// getTokenSession.js
 export async function GetTokenSession(transactionId, {
     requestSource = 'ECOMMERCE',
     merchantCode = '',
@@ -5,12 +6,13 @@ export async function GetTokenSession(transactionId, {
     publicKey = '',
     amount = '',
 }) {
-
-    //llamado al backend interno de esta app
     try {
-        const response = await fetch('http://localhost:4242/token', {
+        const response = await fetch('/api/token', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'transactionId': transactionId },
+            headers: {
+                'Content-Type': 'application/json',
+                'transactionId': transactionId,
+            },
             body: JSON.stringify({
                 requestSource,
                 merchantCode,
@@ -19,15 +21,15 @@ export async function GetTokenSession(transactionId, {
                 amount,
             }),
         });
+
         return await response.json();
     } catch (e) {
-        console.log('REVISA QUE EL ARCHIVO SERVER SE ESTE EJECUTANDO!');
+        console.log('¡No se pudo conectar al backend de Laravel!');
         return {
             response: {
                 token: undefined,
                 error: '01_NODE_API'
             }
         };
-
     }
 }

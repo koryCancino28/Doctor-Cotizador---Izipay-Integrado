@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Validation\Rule;
 class RegisterController extends Controller
 {
     /*
@@ -37,14 +37,14 @@ class RegisterController extends Controller
         if (!auth()->check()) {
         return redirect()->route('login');
     }
-    
+    $visitadoras = User::where('role_id', 3)->get();
     // Verificar rol
     if (!in_array(auth()->user()->role->name, ['Admin', 'Jefe Proyecto'])) {
         abort(403, 'Acceso no autorizado');
     }
         // Obtener todos los roles de la base de datos
         $roles = Role::all();
-        return view('auth.register', compact('roles'));  
+        return view('auth.register', compact('roles', 'visitadoras'));  
     }
 
     /**
@@ -53,32 +53,34 @@ class RegisterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function register(Request $request)
-{
-    // Validar los datos del formulario de registro
-    $this->validator($request->all())->validate();
+            public function register(Request $request)
+    {
+        if ($request->role_id != 4) {
+            $request->merge(['visitadora_id' => null]);
+        }
+        $this->validator($request->all())->validate();
 
-    // Obtener el rol por ID
-    $role = Role::findOrFail($request->role_id);
+        // Obtener el rol por ID
+        $role = Role::findOrFail($request->role_id);
 
-    // Crear el usuario con el rol asignado
-    $user = $this->create($request->all());
+        // Crear el usuario con el rol asignado
+        $user = $this->create($request->all());
 
-    // Si el rol del usuario es 4 (por ejemplo, "Doctor"), crear un registro en la tabla clientes
-    if ($user->role_id == 4) {
-        // Crear el cliente asociado al usuario
-        Cliente::create([
-            'nombre' => $user->name,  
-            'cmp' => $user->cmp,  
-            'tipo_delivery' => $request->tipo_delivery,  
-            'user_id' => $user->id, // Relacionamos el cliente con el usuario
-        ]);
+        // Si el rol del usuario es 4 (Doctor), crear un cliente asociado y asignar la visitadora
+        if ($user->role_id == 4) {
+            Cliente::create([
+                'nombre' => $user->name,
+                'cmp' => $request->cmp,
+                'tipo_delivery' => $request->tipo_delivery,
+                'telefono' => $request->telefono,
+                'direccion' => $request->direccion,
+                'user_id' => $user->id,
+                'visitadora_id' => $request->visitadora_id, 
+            ]);
+        }
+
+        return redirect()->route('usuarios.index')->with('success', 'Usuario registrado exitosamente');
     }
-
-    // Redirigir a la página de usuarios
-    return redirect()->route('usuarios.index')->with('success', 'Usuario registrado exitosamente');
-}
-
 
     /**
      * Obtener un validador para una solicitud de registro entrante.
@@ -88,18 +90,31 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'], // Asegúrate que 'email' se valide en la tabla users
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role_id' => ['required', 'exists:roles,id'],
-            'cmp' => ['nullable', 'string', 'unique:users,cmp', 'max:10'], 
-        ], [
-            'email.unique' => 'El correo electrónico ya está registrado. Por favor, use otro.', // Mensaje personalizado
-            'cmp.unique' => 'El CMP ya está registrado. Por favor, use otro.',
+            'cmp' => ['nullable', 'string', 'unique:clientes,cmp', 'max:10'],
+            'tipo_delivery' => ['nullable', 'in:Recojo en tienda,Entrega a domicilio'],
+            'telefono' => ['nullable', 'string', 'max:20'],
+            'direccion' => ['nullable', 'string', 'max:255'],
+        ];
+
+        // Solo agregar esta validación si el rol es Doctor (4)
+        if (isset($data['role_id']) && $data['role_id'] == 4) {
+            $rules['visitadora_id'] = ['required', 'exists:users,id'];
+        }
+
+        return Validator::make($data, $rules, [
+            'email.unique' => 'El correo electrónico ya está registrado.',
+            'cmp.unique' => 'El CMP ya está registrado.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+            'visitadora_id.required' => 'Debe seleccionar una visitadora médica para el doctor.',
+            'visitadora_id.exists' => 'La visitadora médica seleccionada no es válida.',
         ]);
     }
-
     /**
      * Crear una nueva instancia de usuario después de una validación exitosa.
      *
@@ -110,10 +125,10 @@ class RegisterController extends Controller
     {
         return User::create([
             'name' => $data['name'],
+            'last_name' => $data['last_name'] ?? null,
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role_id' => $data['role_id'],   // Asignar el role_id al usuario
-            'cmp' => $data['cmp'], // Guardar cmp si es doctor
         ]);
     }
 
@@ -129,76 +144,121 @@ class RegisterController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        $roles = Role::all();  // Obtener todos los roles disponibles
-        return view('registrar.edit', compact('user', 'roles'));
+        $roles = Role::all();  
+        $visitadoras = User::where('role_id', 3)->get();
+        return view('registrar.edit', compact('user', 'roles', 'visitadoras'));
     }
 
-    // Actualizar un usuario
     public function update(Request $request, $id)
     {
-        // Validar los datos de entrada
+        $user = User::findOrFail($id);
+        $cliente = Cliente::where('user_id', $user->id)->first();
+        $clienteId = optional($cliente)->id;
+
+        // Verificar si tiene formulaciones o cotizaciones asociadas
+        $tieneAsociaciones = $cliente && (
+            $cliente->formulaciones()->exists() ||
+            $cliente->cotizaciones()->exists()
+        );
+
+        // Si es doctor y quiere cambiar de rol, pero tiene relaciones, bloquear
+        if ($user->role_id == 4 && $request->role_id != 4 && $tieneAsociaciones) {
+            return redirect()->back()->with('error', 'No se puede cambiar el rol porque este doctor tiene formulaciones o cotizaciones asociadas.');
+        }
+
+        // Si no es doctor, limpiar visitadora
+        if ($request->role_id != 4) {
+            $request->merge(['visitadora_id' => null]);
+        }
+
+        // Validación de datos
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,  // Excluir el correo del usuario actual
+            'last_name' => 'nullable|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'role_id' => 'required|exists:roles,id',
-            'cmp' => 'nullable|string|max:10|unique:users,cmp,' . $id,  // Validar CMP como único, excepto el usuario actual
+            'cmp' => [
+                'nullable',
+                'string',
+                'max:10',
+                Rule::unique('clientes', 'cmp')->ignore($clienteId),
+            ],
+            'visitadora_id' => ['nullable', 'required_if:role_id,4', 'exists:users,id'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ], [
+            'email.unique' => 'El correo electrónico ya está registrado. Por favor, use otro.',
+            'cmp.unique' => 'El CMP ya está registrado. Por favor, use otro.',
+            'visitadora_id.required_if' => 'Debe seleccionar una visitadora médica para el doctor.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
-    
-        // Buscar el usuario por su ID
-        $user = User::findOrFail($id);
-    
-        // Verificar si el rol ha cambiado
+
+        // Detectar cambio de rol
         $roleChanged = $user->role_id !== $request->role_id;
-    
-        if ($roleChanged) {
-            if ($request->role_id == 4) {  // Si el rol cambia a 'Doctor' (suponemos que el rol Doctor tiene ID 4)
-                // Verificar si el usuario ya tiene un cliente asociado
-                $cliente = Cliente::where('user_id', $user->id)->first();
-                if (!$cliente) {
-                    // Si no existe, crear un nuevo cliente
-                    Cliente::create([
-                        'nombre' => $user->name,
-                        'cmp' => $request->cmp,  // Asegúrate de pasar correctamente el CMP
-                        'tipo_delivery' => $request->tipo_delivery,  
-                        'user_id' => $user->id,
-                    ]);
-                } else {
-                    // Si ya existe un cliente, actualizar el CMP
-                    $cliente->update([
-                        'cmp' => $request->cmp,  // Actualizar CMP si es necesario
-                    ]);
-                }
-                // Asegúrate de que CMP esté presente al cambiar a Doctor
-                $user->cmp = $request->cmp;
+
+        // Si cambió a doctor
+        if ($roleChanged && $request->role_id == 4) {
+            if (!$cliente) {
+                Cliente::create([
+                    'nombre' => $request->name . ' ' . ($request->last_name ?? ''),
+                    'cmp' => $request->cmp,
+                    'user_id' => $user->id,
+                    'visitadora_id' => $request->visitadora_id,
+                ]);
             } else {
-                // Si el nuevo rol no es 'Doctor', eliminar el cliente asociado y el CMP
-                Cliente::where('user_id', $user->id)->delete();
-                $user->cmp = null;  // Eliminar CMP del usuario si ya no es Doctor
+                $cliente->update([
+                    'nombre' => $request->name . ' ' . ($request->last_name ?? ''),
+                    'cmp' => $request->cmp,
+                    'visitadora_id' => $request->visitadora_id,
+                ]);
             }
+
+        } elseif ($roleChanged && $request->role_id != 4) {
+            // Si dejó de ser doctor
+            Cliente::where('user_id', $user->id)->delete();
+
         } else {
-            // Si no ha cambiado el rol, mantener el CMP si sigue siendo Doctor
-            if ($user->role_id == 4) {
-                $user->cmp = $request->cmp;
+            // Si sigue siendo doctor
+            if ($user->role_id == 4 && $cliente) {
+                $cliente->update([
+                    'nombre' => $request->name . ' ' . ($request->last_name ?? ''),
+                    'cmp' => $request->cmp,
+                    'visitadora_id' => $request->visitadora_id,
+                ]);
             }
         }
-    
-        // Actualizar el usuario con los nuevos datos
-        $user->update([
+        $data = [
             'name' => $request->name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
-            'role_id' => $request->role_id,  
-            'cmp' => $user->cmp,  // Asegurarse de que CMP se actualiza correctamente
-        ]);
-    
+            'role_id' => $request->role_id,
+        ];
+
+        // Si hay contraseña, se encripta y se agrega
+        if (!empty($request->password)) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        // Actualizar usuario
+        $user->update($data);
+
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente');
     }
-    
 
-
-    // Eliminar un usuario
-    public function destroy($id)
+        // Eliminar un usuario
+        public function destroy($id)
     {
         $user = User::findOrFail($id);
+        $cliente = $user->cliente;
+        $tieneAsociaciones = $cliente && (
+            $cliente->formulaciones()->exists() || 
+            $cliente->cotizaciones()->exists()
+        );
+        // Si tiene relaciones, no permitir la eliminación
+        if ($tieneAsociaciones) {
+            return redirect()->back()->with('error', 'No se puede eliminar este usuario porque tiene formulaciones o cotizaciones asociadas.');
+        }
+        // Si no tiene relaciones, eliminar normalmente
         $user->delete();
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado exitosamente');

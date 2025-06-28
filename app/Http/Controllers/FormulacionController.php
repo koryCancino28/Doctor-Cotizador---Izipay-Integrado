@@ -11,7 +11,7 @@ class FormulacionController extends Controller
     public function index()
     {
         // Traemos todas las formulaciones con la relación cliente
-        $formulaciones = Formulacion::with('cliente')->paginate(10);
+        $formulaciones = Formulacion::with('cliente')->get();
         return view('formulaciones.index', compact('formulaciones'));
     }
 
@@ -74,8 +74,9 @@ class FormulacionController extends Controller
 
         // Verificar si el item ya existe para el cliente (doctor)
         $existingFormulation = Formulacion::where('item', $request->item)
-                                        ->where('cliente_id', $request->cliente_id)
-                                        ->first();
+        ->where('cliente_id', $request->cliente_id)
+        ->where('id', '!=', $formulacione->id) // Excluir el actual
+        ->first();
 
         if ($existingFormulation) {
             // Si existe, devuelve un error con el mensaje adecuado

@@ -24,6 +24,8 @@ Route::post('/registrar', [RegisterController::class, 'register'])
 
 //CLIENTE
 Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index')->middleware('checkRole:Admin,Visitadora Medica');
+Route::post('/confirmacion', [ClienteController::class, 'store'])->name('confirmacion.store');
+
 
 //cotizacion
 Route::get('/cotizacion', [CotizacionController::class, 'index'])->name('cotizacion.index')->middleware('checkRole:Doctor'); 

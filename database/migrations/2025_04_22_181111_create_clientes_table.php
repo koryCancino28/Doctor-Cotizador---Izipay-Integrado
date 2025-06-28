@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('tipo_delivery', ['Recojo en tienda', 'Entrega a domicilio'])->nullable();
             $table->string('telefono')->nullable(); 
             $table->text('direccion')->nullable();
+            $table->foreignId('visitadora_id')->constrained('users')->onDelete('cascade'); //relación con users para obtener la visitadora asociada a cada medico
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relación con users
             $table->timestamps();
         });

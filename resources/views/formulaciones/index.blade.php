@@ -3,23 +3,20 @@
 @section('title', 'Cotizador')
 
 @section('content_header')
-
+<div></div>
 @stop
 
 @section('content')
-<div class="container mt-2" style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);">
-    <h1 class="text-center" style="color: #fe495f; font-weight: bold;">Lista de Formulaciones</h1>
-    <a href="{{ route('formulaciones.create') }}" class="btne" style="background-color: #fe495f; color: white; font-size: 1.1rem; padding: 12px 30px; border-radius: 8px;">Crear Nueva Formulación</a>
+<div class="" style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    @include('messages')
 
-    @if(session('success'))
-        <div class="alert alert-success mt-3" style="background-color: #d4edda; border-color: #c3e6cb; color: #155724;">
-            {{ session('success') }}
-        </div>
-    @endif
+    <h1 class="text-center mb-3" style="color: #fe495f; font-weight: bold;">Formulaciones <i class="fas fa-flask mr-2"></i></h1>
+    <a href="{{ route('formulaciones.create') }}" class="btne" style="background-color: #fe495f; color: white; font-size: 1.1rem; padding: 12px 30px; border-radius: 8px;"><i class="fas fa-file-medical mr-2"></i>
+    Crear Nueva Formulación</a>
 
     <!-- Tabla responsiva -->
-    <div class="table-responsive mt-3">
-        <table class="table table-striped table-bordered shadow-sm rounded">
+    <div class="table-responsive mt-3" style="border-radius: 10px;">
+        <table class="table table-striped table-bordered shadow-sm rounded" id="formulacionesTable">
             <thead style="background-color: #fe495f; color: white;">
                 <tr>
                     <th>Item</th>
@@ -34,10 +31,10 @@
                 @foreach($formulaciones as $formulacion)
                     <tr>
                         <td>{{ $formulacion->item }}</td>
-                        <td>{{ $formulacion->name }}</td>
+                        <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $formulacion->name }}</td>
                         <td>{{ $formulacion->precio_publico }}</td>
                         <td>{{ $formulacion->precio_medico }}</td>
-                        <td>{{ $formulacion->cliente->nombre }}</td>
+                        <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $formulacion->cliente->nombre }}</td>
                         <td>
                             <div class="w">
                                 <a href="{{ route('formulaciones.show', $formulacion) }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8;"><i class="fa-regular fa-eye"></i>Ver</a>
@@ -52,10 +49,7 @@
                     </tr>
                 @endforeach
             </tbody>
-        </table>
-        <div class="d-flex justify-content-center mt-4">
-            {!! $formulaciones->appends(request()->except('page'))->links('pagination::bootstrap-5') !!}
-        </div>      
+        </table>      
     </div>
 </div>
 @stop
@@ -78,12 +72,6 @@
             display: flex;
             justify-content: space-around;
             gap: 10px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
         }
 
         table thead th {
@@ -116,5 +104,18 @@
 
 @section('js')
     <script>
+        $(document).ready(function() {
+        $('#formulacionesTable').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json',
+            },
+            responsive: true,
+            ordering: false,
+            pageLength: 10,
+            lengthChange: false,
+            info: false
+        });
+        $('.dataTables_filter').addClass('mb-3 mt-3');
+    });
     </script>
 @stop

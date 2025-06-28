@@ -75,7 +75,7 @@
             </div>
 
             <div class="col-5">
-                <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
+                <button type="submit" class="btn btn-login btn-block">
                     <span class="fas fa-sign-in-alt"></span>
                     {{ __('adminlte::adminlte.sign_in') }}
                 </button>
@@ -84,3 +84,69 @@
     </form>
 @stop
 
+@section('adminlte_css')
+    <style>
+        body.login-page {
+            background: url("{{ asset('images/grobdi-login.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            backdrop-filter: blur(2px);
+        }
+
+        .login-box {
+            background-color: rgba(255, 245, 245, 0.88);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 1s ease;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .login-box:hover {
+            transform: scale(1.01);
+            box-shadow: 0 10px 30px rgba(255, 243, 243, 0.25);
+        }
+
+        .form-control {
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #fe495f;
+            box-shadow: 0 0 0 0.2rem rgba(254, 73, 95, 0.25);
+        }
+
+        .btn-login {
+            background-color: #FC0000;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-login:hover {
+            background-color: #e60000;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(252, 0, 0, 0.4);
+        }
+
+        .input-group-text {
+            background-color: #fff5f5;
+            transition: background-color 0.3s;
+        }
+
+        .input-group:focus-within .input-group-text {
+            background-color: #ffe0e0;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+@stop

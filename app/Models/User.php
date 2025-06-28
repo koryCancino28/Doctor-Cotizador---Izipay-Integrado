@@ -19,10 +19,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
         'password',
         'role_id',
-        'cmp'
     ];
 
     /**
@@ -55,5 +55,9 @@ class User extends Authenticatable
     public function cliente()
     {
         return $this->hasOne(Cliente::class);
+    }
+        public function confirmaciones()
+    {
+        return $this->hasMany(Confirmacion::class, 'visitadora_id');
     }
 }

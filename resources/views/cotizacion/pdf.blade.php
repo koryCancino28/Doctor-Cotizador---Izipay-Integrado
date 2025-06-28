@@ -62,6 +62,7 @@
 
         .section-title {
             background-color: #fe495f;
+            border-radius: 10px;
             color: white;
             padding: 10px;
             font-weight: bold;
@@ -159,15 +160,15 @@
     <div class="info">
         <table>
             <tr>
-                <td><strong>Nombre:</strong> {{ $cliente->user->name }}</td>
-                <td><strong>CMP:</strong> {{ $cliente->cmp }}</td>
+                <td><strong style="color:rgb(244, 89, 107);">Doctor:</strong> {{ $cliente->user->name }} {{ $cliente->user->last_name }}</td>
+                <td><strong style="color:rgb(244, 89, 107);">CMP:</strong> {{ $cliente->cmp }}</td>
             </tr>
             <tr>
-                <td><strong>Teléfono:</strong> {{ $cliente->telefono }}</td>
-                <td><strong>Dirección:</strong> {{ $cliente->direccion }}</td>
+                <td><strong style="color:rgb(244, 89, 107);">Teléfono:</strong> {{ $cliente->telefono }}</td>
+                <td><strong style="color:rgb(244, 89, 107);">Dirección:</strong> {{ $cliente->direccion }}</td>
             </tr>
             <tr>
-                <td><strong>Tipo de entrega:</strong> {{ $cliente->tipo_delivery }}</td>
+                <td><strong style="color:rgb(244, 89, 107);">Tipo de entrega:</strong> {{ $cliente->tipo_delivery }}</td>
                 <td></td> <!-- Celda vacía para mantener la estructura -->
             </tr>
         </table>
@@ -175,7 +176,7 @@
         <!-- Condicional para Observación -->
         @if($observacion)
             <div class="observacion-table">
-                <p><strong>Observación:</strong></p>
+                <p><strong style="color:rgb(244, 89, 107);">Observación:</strong></p>
                 <table>
                     <tr>
                         <td>{{ $observacion }}</td>
@@ -202,6 +203,7 @@
     <table>
         <thead>
             <tr>
+                <th>Item</th>
                 <th>Formulación</th>
                 <th>Cantidad</th>
                 <th>Precio Unitario</th>
@@ -211,6 +213,7 @@
         <tbody>
             @foreach($items as $item)
                 <tr>
+                    <td>{{ $item['item'] }}</td>
                     <td>{{ $item['nombre'] }}</td>
                     <td>{{ $item['cantidad'] }}</td>
                     <td>S/ {{ number_format($item['precio'], 2) }}</td>
@@ -220,7 +223,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="3" class="total">TOTAL:</td>
+                <td colspan="4" class="total">TOTAL:</td>
                 <td>S/ {{ number_format($total, 2) }}</td>
             </tr>
         </tfoot>
@@ -231,9 +234,11 @@
 <div class="footer">
     <p><strong>Gracias por su preferencia.</strong></p>
     <p><strong>Nota:</strong> Los precios incluyen el IGV. 
-        Condiciones de pago: Transferencia bancaria. 
         Entrega: Según coordinación previa.</p>
     <p>© {{ date('Y') }} - Todos los derechos reservados.</p>
+    <p style="font-weight: bold; white-space: pre-line;">
+        {!! $infoPago !!}
+    </p>
 </div>
 
 </body>

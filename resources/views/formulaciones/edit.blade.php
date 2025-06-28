@@ -3,36 +3,41 @@
 @section('title', 'Cotizador')
 
 @section('content_header')
+<div></div>
 @stop
 
 @section('content')
-<div class="container mt-2" style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);">
+<div class="" style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
     <h1 class="text-center" style="color: #fe495f; font-weight: bold;">{{ isset($formulacione) ? 'Editar Formulación' : 'Crear Nueva Formulación' }}</h1>
 
     <form action="{{ route('formulaciones.update', $formulacione) }}" method="POST">
         @csrf
         @method('PUT')
-        <div class="form-group">
-            <label for="item" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Item</label>
-            <input type="text" class="form-control @error('item') is-invalid @enderror" id="item" name="item" value="{{ $formulacione->item }}"  required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
-            @error('item')
-                <div style="color:rgb(199, 0, 0);" class="invalid-feedback">{{ $message }}</div>
-            @enderror
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="item" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Item</label>
+                <input type="text" class="form-control @error('item') is-invalid @enderror" id="item" name="item" value="{{ $formulacione->item }}" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+                @error('item')
+                    <div style="color:rgb(199, 0, 0);" class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="name" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Nombre</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ $formulacione->name }}" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="name" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Nombre</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ $formulacione->name }}"  required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
-        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="precio_publico" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Precio Público</label>
+                <input type="number" step="0.01" class="form-control" id="precio_publico" name="precio_publico" value="{{ $formulacione->precio_publico }}" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            </div>
 
-        <div class="form-group">
-            <label for="precio_publico" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Precio Público</label>
-            <input type="number" step="0.01" class="form-control" id="precio_publico" name="precio_publico" value="{{ $formulacione->precio_publico }}"  required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
-        </div>
-
-        <div class="form-group">
-            <label for="precio_medico" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Precio Médico</label>
-            <input type="number" step="0.01" class="form-control" id="precio_medico" name="precio_medico" value="{{ $formulacione->precio_medico }}"  required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            <div class="form-group col-md-6">
+                <label for="precio_medico" class="font-weight-bold" style="font-size: 1.1rem; color: #fe495f;">Precio Médico</label>
+                <input type="number" step="0.01" class="form-control" id="precio_medico" name="precio_medico" value="{{ $formulacione->precio_medico }}" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            </div>
         </div>
 
         <div class="form-group">

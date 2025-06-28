@@ -3,41 +3,42 @@
 @section('title', 'Crear Formulación')
 
 @section('content_header')
-
+<div></div>
 @stop
 
 @section('content')
-<div class="container mt-2" style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);">
-    <h1 class="text-center" style="color: #fe495f; font-weight: bold;">Crear Nueva Formulación</h1>
+<div class="" style="background-color: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    <h1 class="text-center" style="color: #fe495f; font-weight: bold;">Nueva Formulación</h1>
 
     <form action="{{ route('formulaciones.store') }}" method="POST">
         @csrf
+        <!-- Fila 1: Item y Nombre -->
+        <div class="form-row mb-4">
+            <div class="form-group col-md-6">
+                <label for="item" class="font-weight-bold" style="color: #fe495f;">Item</label>
+                <input type="text" class="form-control form-control-lg @error('item') is-invalid @enderror" id="item" name="item" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+                @error('item')
+                    <div style="color:rgb(199, 0, 0);" class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
-        <!-- Campo de Item -->
-        <div class="form-group mb-4">
-            <label for="item" class="font-weight-bold" style="color: #fe495f;">Item</label>
-            <input type="text" class="form-control form-control-lg @error('item') is-invalid @enderror" id="item" name="item" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
-            @error('item')
-                <div style="color:rgb(199, 0, 0);" class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <div class="form-group col-md-6">
+                <label for="name" class="font-weight-bold" style="color: #fe495f;">Nombre</label>
+                <input type="text" class="form-control form-control-lg" id="name" name="name" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            </div>
         </div>
 
-        <!-- Campo de Nombre -->
-        <div class="form-group mb-4">
-            <label for="name" class="font-weight-bold" style="color: #fe495f;">Nombre</label>
-            <input type="text" class="form-control form-control-lg" id="name" name="name" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
-        </div>
+        <!-- Fila 2: Precio Público y Precio Médico -->
+        <div class="form-row mb-4">
+            <div class="form-group col-md-6">
+                <label for="precio_publico" class="font-weight-bold" style="color: #fe495f;">Precio Público</label>
+                <input type="number" step="0.01" class="form-control form-control-lg" id="precio_publico" name="precio_publico" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            </div>
 
-        <!-- Campo de Precio Público -->
-        <div class="form-group mb-4">
-            <label for="precio_publico" class="font-weight-bold" style="color: #fe495f;">Precio Público</label>
-            <input type="number" step="0.01" class="form-control form-control-lg" id="precio_publico" name="precio_publico" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
-        </div>
-
-        <!-- Campo de Precio Médico-->
-        <div class="form-group mb-4">
-            <label for="precio_medico" class="font-weight-bold" style="color: #fe495f;">Precio Médico</label>
-            <input type="number" step="0.01" class="form-control form-control-lg" id="precio_medico" name="precio_medico" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            <div class="form-group col-md-6">
+                <label for="precio_medico" class="font-weight-bold" style="color: #fe495f;">Precio Médico</label>
+                <input type="number" step="0.01" class="form-control form-control-lg" id="precio_medico" name="precio_medico" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
+            </div>
         </div>
 
         <!-- Campo de Cliente -->

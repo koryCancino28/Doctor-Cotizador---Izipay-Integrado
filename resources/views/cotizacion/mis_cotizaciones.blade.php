@@ -7,17 +7,17 @@
 @stop
 
 @section('content')
-<div class="container mt-2" style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);">
-    <h1 class="text-center" style="color: #fe495f; font-weight: bold;"><i class="fa-solid fa-file-lines"></i> Mis Cotizaciones</h1>
+<div class="" style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    <h1 class="text-center" style="color: #fe495f; font-weight: bold;">Mis Cotizaciones <i class="fa-solid fa-hand-holding-dollar"></i></h1>
 
     @if($cotizaciones->count() > 0)
-        <table class="table table-bordered" id="table_cotizacion">
+        <table class="table table-bordered table-responsive" id="table_cotizacion">
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Formulaciones</th>
-                    <th>Total</th>
-                    <th>PDF</th>
+                    <th>Fecha <i class="fa-solid fa-calendar-days"></i></th>
+                    <th>Formulaciones <i class="fa-solid fa-atom"></i></th>
+                    <th>Total <i class="fa-solid fa-money-check-dollar"></i></th>
+                    <th>PDF <i class="fa-solid fa-file-lines"></i></th>
                     <th>Vista Previa</th>
                 </tr>
             </thead>
@@ -61,7 +61,12 @@
         <h5 class="modal-title" id="pdfPreviewModalLabel" style="font-weight: bold;"><i class="fa-solid fa-file"></i> Vista Previa de Cotización</h5>
       </div>
       <div class="modal-body p-0" style="background-color: #fff; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-        <iframe id="pdfPreviewIframe" src="" frameborder="0" style="width: 100%; height: 80vh; border-radius: 0 0 12px 12px;"></iframe>
+        <iframe 
+            id="pdfPreviewIframe" 
+            src="" 
+            frameborder="0" 
+            style="width: 100%; height: 80vh; border-radius: 0 0 12px 12px;">
+        </iframe>
       </div>
     </div>
   </div>
@@ -128,11 +133,20 @@
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
+  
     function openPdfPreview(button) {
-        const pdfUrl = button.getAttribute('data-pdf');
+    const pdfUrl = button.getAttribute('data-pdf');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        // Abrir directamente
+        window.open(pdfUrl, '_blank');
+    } else {
+       const pdfUrl = button.getAttribute('data-pdf');
         document.getElementById('pdfPreviewIframe').src = pdfUrl;
         new bootstrap.Modal(document.getElementById('pdfPreviewModal')).show();
     }
+}
 
     $(document).ready(function() {
         $('#table_cotizacion').DataTable({
@@ -155,6 +169,8 @@
                     }).remove()
                     .end()
                     .prepend('Buscar:');
+                    $('.dataTables_paginate').addClass('pagination-sm'); // si usas Bootstrap
+
             }
         });
     });

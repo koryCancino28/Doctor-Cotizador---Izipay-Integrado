@@ -16,17 +16,43 @@
             <i class="fas fa-user-edit mr-2"></i> Registrar Nuevo Usuario
             </div>
             <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-dismissible fade show text-center position-relative" role="alert" style="background-color:rgb(254, 247, 120); color: rgb(184, 187, 11);">
+                        <ul class="mb-0 list-unstyled">
+                            @foreach ($errors->all() as $error)
+                                <li><i class="fas fa-exclamation-circle"></i> {{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button"
+                                class="close position-absolute" style="top: 0.5rem; right: 1rem;"
+                                data-dismiss="alert" aria-label="Cerrar">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                @endif
                 <form action="{{ route('register.store') }}" method="POST">
                     @csrf
 
                     <!-- Nombre -->
-                    <div class="form-group">
-                        <label for="name" style="color: #fe495f;">Nombre Completo</label>
-                        <div class="input-group">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="name" style="color: #fe495f;">Nombre</label>
+                            <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user" style="color:rgb(245, 114, 129);"></i></span>
                             </div>
-                            <input type="text" name="name" id="name" class="form-control" placeholder="Nombre completo" required value="{{ old('name') }}">
+                            <input type="text" name="name" id="name" class="form-control" placeholder="Nombre" required value="{{ old('name') }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="last_name" style="color: #fe495f;">Apellido</label>
+                            <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user" style="color:rgb(245, 114, 129);"></i></span>
+                            </div>
+                            <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Apellido" required value="{{ old('last_name') }}">
+                            </div>
                         </div>
                     </div>
 
@@ -99,11 +125,27 @@
                 <!-- CMP (solo visible si el rol es Doctor) -->
                 <div class="form-group" id="cmp_group" style="display: none;">
                         <label for="cmp" style="color: #fe495f;">CMP</label>
-                        <div class="input-group">
+                        <div class="input-group  mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-id-card" style="color:rgb(245, 114, 129);"></i></span>
                             </div>
-                            <input type="text" name="cmp" id="cmp" class="form-control" placeholder="Ingrese el CMP" value="{{ old('cmp') }}">
+                            <input type="text" name="cmp" id="cmp" class="form-control" placeholder="Ingrese el CMP">
+                        </div>
+                        <label for="visitadora_id" style="color: #fe495f;">Visitadora Médica</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user-nurse" style="color:rgb(245, 114, 129);"></i>
+                                </span>
+                            </div>
+                            <select name="visitadora_id" id="visitadora_id" class="form-control">
+                                <option value="">-- Selecciona una visitadora --</option>
+                                @foreach ($visitadoras as $visitadora)
+                                    <option value="{{ $visitadora->id }}" {{ old('visitadora_id') == $visitadora->id ? 'selected' : '' }}>
+                                        {{ $visitadora->name }} {{ $visitadora->last_name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="form-group text-right">
@@ -141,44 +183,42 @@
 
 @section('js')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Función genérica para toggle
-    function setupToggle(buttonClass, fieldId) {
-        const toggleBtn = document.querySelector(buttonClass);
-        if(toggleBtn) {
-            toggleBtn.addEventListener('click', function() {
-                const field = document.querySelector(fieldId);
-                const icon = this.querySelector('i');
-                const type = field.getAttribute('type') === 'password' ? 'text' : 'password';
-                field.setAttribute('type', type);
-                icon.classList.toggle('fa-eye-slash');
-            });
-        }
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Función para mostrar u ocultar el campo CMP según el rol seleccionado
+        const roleSelect = document.getElementById('role_id');
+        const cmpGroup = document.getElementById('cmp_group');
+        
+        roleSelect.addEventListener('change', function() {
+            // Si el rol es "Doctor" (ID 4), mostrar el campo cmp
+            if (roleSelect.value == '4') {
+                cmpGroup.style.display = 'block'; // Mostrar el campo CMP
+            } else {
+                cmpGroup.style.display = 'none'; // Ocultar el campo CMP
+            }
+        });
 
-    // Configurar ambos toggles
-    setupToggle('.toggle-password', '#password');
-    setupToggle('.toggle-confirm-password', '#password_confirmation');
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Función para mostrar u ocultar el campo CMP según el rol seleccionado
-    const roleSelect = document.getElementById('role_id');
-    const cmpGroup = document.getElementById('cmp_group');
-    
-    roleSelect.addEventListener('change', function() {
-        // Si el rol es "Doctor" (ID 4), mostrar el campo cmp
+        // Verificar si el rol seleccionado al cargar la página es "Doctor"
         if (roleSelect.value == '4') {
-            cmpGroup.style.display = 'block'; // Mostrar el campo CMP
-        } else {
-            cmpGroup.style.display = 'none'; // Ocultar el campo CMP
+            cmpGroup.style.display = 'block'; // Mostrar el campo CMP si el rol es Doctor
         }
-    });
 
-    // Verificar si el rol seleccionado al cargar la página es "Doctor"
-    if (roleSelect.value == '4') {
-        cmpGroup.style.display = 'block'; // Mostrar el campo CMP si el rol es Doctor
-    }
-});
+        // Función genérica para toggle
+        function setupToggle(buttonClass, fieldId) {
+            const toggleBtn = document.querySelector(buttonClass);
+            if(toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    const field = document.querySelector(fieldId);
+                    const icon = this.querySelector('i');
+                    const type = field.getAttribute('type') === 'password' ? 'text' : 'password';
+                    field.setAttribute('type', type);
+                    icon.classList.toggle('fa-eye-slash');
+                });
+            }
+        }
+
+        // Configurar ambos toggles
+        setupToggle('.toggle-password', '#password');
+        setupToggle('.toggle-confirm-password', '#password_confirmation');
+    });
 </script>
 @stop

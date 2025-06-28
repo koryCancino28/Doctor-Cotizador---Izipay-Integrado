@@ -10,9 +10,7 @@ class Cotizacion extends Model
 
     protected $table = 'cotizaciones';
 
-    protected $fillable = ['cliente_id', 'formulacion_id', 'cantidad', 'total', 'observacion', 'pdf_filename'];
-
-    // App\Models\Cotizacion.php
+    protected $fillable = ['cliente_id', 'formulacion_id', 'cantidad', 'total', 'observacion', 'pdf_filename', 'tipo_pago', 'voucher_path', 'codigo_transaccion'];
 
     public function detalles()
     {
@@ -23,4 +21,9 @@ class Cotizacion extends Model
     {
         return $this->belongsTo(Cliente::class);
     } 
+        public function confirmacion()
+    {
+        return $this->hasOne(Confirmacion::class);
+    }
+
 }

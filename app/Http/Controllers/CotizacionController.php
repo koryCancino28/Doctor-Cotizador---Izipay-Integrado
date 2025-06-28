@@ -38,6 +38,13 @@ class CotizacionController extends Controller
             'tipo_delivery' => 'required|in:Recojo en tienda,Entrega a domicilio',
             'direccion' => 'required|string|max:255',
             'observacion' => 'nullable|string|max:500',
+            'tipo_pago' => 'required|in:contra_entrega,pasarela_izipay,transferencia',
+            'voucher' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'codigo_transaccion' => 'nullable|string|max:100',
+        ], [
+            'items.required' => 'Debes ingresar al menos una Formulación para ser cotizada.',
+            'items.min' => 'Debes ingresar al menos una Formulación para ser cotizada.',
+            'items.*.cantidad.required' => 'La cantidad es obligatoria para cada ítem.',
         ]);
 
         try {
@@ -58,17 +65,26 @@ class CotizacionController extends Controller
                 $total += $item['precio'] * $item['cantidad'];
             }
 
-            // Creamos la cotización (cabecera)
+            $voucherPath = null;
+            if ($request->hasFile('voucher')) {
+                $path = $request->file('voucher')->store('vouchers', 'public');
+                $voucherPath = 'storage/' . $path;
+            }
+
+            // Creamos la cotización
             $cotizacion = Cotizacion::create([
                 'cliente_id' => $cliente->id,
                 'total' => $total,
                 'observacion' => $validated['observacion'] ?? null,
+                'tipo_pago' => $validated['tipo_pago'],
+                'voucher_path' => $voucherPath,
+                'estado_pago' => $validated['tipo_pago'] === 'pasarela_izipay' ? 'pendiente' : null,
+                'codigo_transaccion' => $validated['codigo_transaccion'] ?? null,
             ]);
 
             $cotizacionItems = [];
 
             foreach ($validated['items'] as $item) {
-                // Guardamos en detalle_cotizacion
                 DB::table('detalle_cotizacion')->insert([
                     'cotizacion_id' => $cotizacion->id,
                     'formulacion_id' => $item['id'],
@@ -77,9 +93,9 @@ class CotizacionController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                // Para generar el PDF
                 $formulacion = Formulacion::find($item['id']);
                 $cotizacionItems[] = [
+                    'item'=> $formulacion->item,
                     'nombre' => $formulacion->name,
                     'cantidad' => $item['cantidad'],
                     'precio' => $item['precio'],
@@ -87,10 +103,18 @@ class CotizacionController extends Controller
                 ];
             }
 
-            // Generamos PDF
-            $pdfUrl = $this->generatePDF($cliente, $cotizacionItems, $total, $validated['observacion'] ?? '');
+            // Generar PDF
+            $pdfUrl = $this->generatePDF(
+                $cliente,
+                $cotizacionItems,
+                $total,
+                $validated['observacion'] ?? '',
+                $validated['tipo_pago'],
+                $voucherPath,
+                $validated['tipo_pago'] === 'pasarela_izipay',
+                $validated['codigo_transaccion'] ?? ''
+            );
 
-            // Guardamos el nombre del archivo PDF en la cabecera
             $pdfFilename = basename($pdfUrl);
             $cotizacion->pdf_filename = $pdfFilename;
             $cotizacion->save();
@@ -100,7 +124,10 @@ class CotizacionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Cotización guardada exitosamente',
-                'pdf_url' => $pdfUrl
+                'pdf_url' => $pdfUrl,
+                'cotizacion_id' => $cotizacion->id,
+                'total' => $total,
+                'tipo_pago' => $validated['tipo_pago']
             ]);
 
         } catch (\Exception $e) {
@@ -111,14 +138,36 @@ class CotizacionController extends Controller
             ], 500);
         }
     }
-
-    
-        private function generatePDF($cliente, $items, $total, $observacion)
+        private function generatePDF($cliente, $items, $total, $observacion, $tipoPago, $voucherPath = null, $esPagoExitoso = false,  $codigoTransaccion = '')
     {
         $options = new Options();
         $options->set('isRemoteEnabled', true);
         $options->set('isHtml5ParserEnabled', true);
         $dompdf = new Dompdf($options);
+        $tipoPagoTexto = ucfirst(str_replace('_', ' ', $tipoPago));
+
+        $infoPago = "Condiciones de pago: $tipoPagoTexto";
+
+        if ($tipoPago === 'transferencia') {
+            if ($voucherPath && file_exists(public_path($voucherPath))) {
+                $voucherFullPath = public_path($voucherPath);
+                $base64 = base64_encode(file_get_contents($voucherFullPath));
+                $voucherImage = 'data:image/jpeg;base64,' . $base64;
+                $infoPago .= "<p style='margin-top:5px;'>";
+                if (!empty($codigoTransaccion)) {
+                    $infoPago .= "Código de transacción: <b>$codigoTransaccion</b><br>";
+                }
+                $infoPago .= "<b>Voucher:</b><br>
+                            <img src='$voucherImage' style='max-width: 300px; max-height: 400px; height: auto; width: auto; display:block; margin-top: 5px;' />
+                            </p>";
+            } else {
+                $infoPago .= "<p style='margin-top:5px;'>Estado: Pago pendiente (no se ha subido el voucher)</p>";
+            }
+        } elseif ($tipoPago === 'pasarela_izipay') {
+            $infoPago .= $esPagoExitoso
+                ? "\nEstado: Operación exitosa"
+                : "\nEstado: Pago fallido o no confirmado";
+        }
 
         // Obtener el logo
         $logoPath = public_path('images/logo_grobdi.png');
@@ -131,7 +180,8 @@ class CotizacionController extends Controller
             'total' => $total,
             'observacion' => $observacion,
             'fecha' => now()->format('d/m/Y'),
-            'logo' => $logo
+            'logo' => $logo,
+            'infoPago' => $infoPago
         ])->render();
 
         $dompdf->loadHtml($html);
@@ -141,7 +191,6 @@ class CotizacionController extends Controller
         $output = $dompdf->output();
         $filename = 'cotizacion - Dr.' .$cliente->id.' - '. time() . '.pdf';
 
-        // 📂 Guardar en public/pdf 
         $relativePath = 'pdf';
         $fullPath = public_path($relativePath);
 
@@ -151,7 +200,6 @@ class CotizacionController extends Controller
 
         file_put_contents($fullPath . '/' . $filename, $output);
 
-        // 🌐 Devolver URL pública
         return asset($relativePath . '/' . $filename);
     }
 
@@ -164,7 +212,6 @@ class CotizacionController extends Controller
             return redirect()->back()->with('error', 'No tienes cotizaciones porque no eres cliente.');
         }
 
-        // Cargar cotizaciones con sus detalles y formulaciones
         $cotizaciones = Cotizacion::with(['detalles.formulacion'])
             ->where('cliente_id', $cliente->id)
             ->whereNotNull('pdf_filename')
