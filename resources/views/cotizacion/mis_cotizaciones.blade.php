@@ -133,46 +133,32 @@
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
-  
     function openPdfPreview(button) {
-    const pdfUrl = button.getAttribute('data-pdf');
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const pdfUrl = button.getAttribute('data-pdf');
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-    if (isMobile) {
-        // Abrir directamente
-        window.open(pdfUrl, '_blank');
-    } else {
-       const pdfUrl = button.getAttribute('data-pdf');
-        document.getElementById('pdfPreviewIframe').src = pdfUrl;
-        new bootstrap.Modal(document.getElementById('pdfPreviewModal')).show();
+        if (isMobile) {
+            // Abrir directamente
+            window.open(pdfUrl, '_blank');
+        } else {
+        const pdfUrl = button.getAttribute('data-pdf');
+            document.getElementById('pdfPreviewIframe').src = pdfUrl;
+            new bootstrap.Modal(document.getElementById('pdfPreviewModal')).show();
+        }
     }
-}
 
     $(document).ready(function() {
         $('#table_cotizacion').DataTable({
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json',
-            },
-            ordering: false,
-            responsive: true,
-            dom: '<"row"<"col-sm-12 col-md-12"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-            pageLength: 10,
-            initComplete: function() {
-                $('.dataTables_filter')
-                    .addClass('mb-2')
-                    .find('input')
-                    .attr('placeholder', 'Buscar datos en la tabla')
-                    .end()
-                    .find('label')
-                    .contents().filter(function() {
-                        return this.nodeType === 3;
-                    }).remove()
-                    .end()
-                    .prepend('Buscar:');
-                    $('.dataTables_paginate').addClass('pagination-sm'); // si usas Bootstrap
-
+            "ordering": false, // Deshabilitar el ordenamiento por columna
+            "searching": true, // Habilitar la barra de búsqueda
+            "paging": true,    // Habilitar la paginación
+            "info": true,      // Habilitar la información de la tabla
+            "lengthChange": false,
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json" // Cargar idioma español
             }
         });
     });
 </script>
 @stop
+@section('plugins.Datatables', true)
