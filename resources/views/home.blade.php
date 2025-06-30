@@ -25,14 +25,14 @@
         /* Fondo general con superposición */
         .content-wrapper {
             background: linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)), 
-                        url("{{ asset('images/grobdi-login.jpg') }}") no-repeat center center fixed;
+                        url("{{ asset('images/gomas.jpeg') }}") no-repeat center center fixed;
             background-size: cover;
             padding: 40px 20px;
             user-select: none;
         }
 
         .welcome-card {
-            background-color: rgba(255, 245, 245, 0.92);
+            background-color: rgba(255, 244, 244, 0.58);
             border-radius: 15px;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
             padding: 40px;

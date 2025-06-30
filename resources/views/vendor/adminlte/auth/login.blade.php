@@ -87,13 +87,13 @@
 @section('adminlte_css')
     <style>
         body.login-page {
-            background: url("{{ asset('images/grobdi-login.jpg') }}") no-repeat center center fixed;
+            background: url("{{ asset('images/login.jpg') }}") no-repeat center center fixed;
             background-size: cover;
-            backdrop-filter: blur(2px);
+            user-select: none;
         }
 
         .login-box {
-            background-color: rgba(255, 245, 245, 0.88);
+            background-color: rgba(255, 242, 242, 0.79);
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
