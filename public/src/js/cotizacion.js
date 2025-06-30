@@ -268,6 +268,7 @@ $(function() {
                         actualizarResumen();
                         $('#notificacion-badge').text('0');
                         $('#voucher').val('');
+                        $('.cantidad-input').val('');
                         $('#codigo_transaccion').val('');
                     },
                     error: function(err) {
