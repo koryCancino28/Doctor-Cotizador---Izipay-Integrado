@@ -243,20 +243,30 @@
             cmpGroup.style.display = 'block'; // Mostrar el campo CMP si el rol es Doctor
         }
         //ocultar contraseña 
-        const toggleButton = document.getElementById('toggle-password-fields');
-        const passwordFields = document.getElementById('password-fields');
+       // ocultar contraseña 
+const toggleButton = document.getElementById('toggle-password-fields');
+const passwordFields = document.getElementById('password-fields');
 
-        toggleButton.addEventListener('click', function () {
-            const isHidden = passwordFields.style.display === 'none' || passwordFields.style.display === '';
+// Obtenemos todos los inputs dentro del contenedor
+const inputs = passwordFields.querySelectorAll('input');
 
-            // Mostrar u ocultar campos
-            passwordFields.style.display = isHidden ? 'block' : 'none';
+toggleButton.addEventListener('click', function () {
+    const isHidden = passwordFields.style.display === 'none' || passwordFields.style.display === '';
 
-            // Cambiar texto e ícono del botón
-            toggleButton.innerHTML = isHidden
-                ? '<i class="fas fa-eye"></i>'
-                : '<i class="fas fa-eye-slash"></i>';
-        });
+    // Mostrar u ocultar campos
+    passwordFields.style.display = isHidden ? 'block' : 'none';
+
+    // Habilitar o deshabilitar inputs
+    inputs.forEach(input => {
+        input.disabled = !isHidden; // si se muestra, se habilita; si se oculta, se deshabilita
+    });
+
+    // Cambiar ícono del botón
+    toggleButton.innerHTML = isHidden
+        ? '<i class="fas fa-eye"></i>'   // se va a mostrar
+        : '<i class="fas fa-eye-slash"></i>'; // se va a ocultar
+});
+
     });
 
     </script>

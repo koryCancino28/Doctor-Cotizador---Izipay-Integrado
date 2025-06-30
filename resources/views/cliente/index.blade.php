@@ -292,3 +292,4 @@
     });
     </script>
 @stop
+@section('plugins.Datatables', true)

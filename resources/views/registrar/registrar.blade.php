@@ -58,7 +58,7 @@
                                 <div class="w">
                                     <a href="{{ route('usuarios.edit', $user->id) }}" class="btn btn-wa btn-sm"><i class="fas fa-user-edit mr-2"></i>
                                     Editar</a>
-                                    <form action="{{ route('usuarios.destroy', $user->id) }}" method="POST" style="display:inline;" onclick="return confirm('¿Eliminar esta formulación?')">
+                                    <form action="{{ route('usuarios.destroy', $user->id) }}" method="POST" style="display:inline;" onclick="return confirm('¿Eliminar este usuario?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-dan btn-sm"><i class="fas fa-trash-alt mr-2"></i>
