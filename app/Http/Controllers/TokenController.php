@@ -47,7 +47,12 @@ class TokenController extends Controller
     public function storePaymentResponse(Request $request)
     {
         $data = $request->all();
-
+        if (($data['code'] ?? null) === '021') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Código 021 no se guarda.',
+            ], 200); 
+        }
         try {
             $payment = Payment::create([
                 'code' => $data['code'] ?? null,
