@@ -93,7 +93,7 @@
         }
 
         .login-box {
-            background-color: rgba(255, 242, 242, 0.79);
+            background-color: rgba(251, 232, 232, 0.84);
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
