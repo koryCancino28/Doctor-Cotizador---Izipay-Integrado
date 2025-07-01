@@ -1,3 +1,19 @@
+$(document).ready(function () {
+        $('#formulaciones').DataTable({
+            paging: true,
+            searching: false,
+            ordering: false,
+            info: false,
+            lengthChange: false, 
+            language: {
+                paginate: {
+                    previous: '«',
+                    next:     '»'
+                }
+            },
+            dom: 'tp' // Solo tabla + paginación
+        });
+    });
 document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("cotizacion-form");
         const btnPayNow = document.getElementById("btnPayNow");
@@ -79,7 +95,7 @@ $(function() {
             }
 
             // Manejo del botón "+" para agregar el producto
-            $('.btn-agregar').click(function() {
+            $(document).on('click', '.btn-agregar', function () {
                 const $row = $(this).closest('tr');
                 const cantidad = parseInt($row.find('.cantidad-input').val()) || 0;
                 const precioPublico = parseFloat($row.data('precio'));

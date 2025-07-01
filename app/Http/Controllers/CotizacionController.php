@@ -22,7 +22,7 @@ class CotizacionController extends Controller
         }
 
         // Paginamos las formulaciones del cliente
-        $formulaciones = $cliente->formulaciones()->paginate(10); 
+        $formulaciones = $cliente->formulaciones()->get(); 
 
         return view('cotizacion.cotizador', compact('formulaciones'));
     }

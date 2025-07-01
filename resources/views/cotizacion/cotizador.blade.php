@@ -71,7 +71,7 @@
 
                 <div style="overflow-x: auto; width: 100%; border-radius: 25px;">
                     <!-- Tabla de Formulaciones -->
-                    <table class="table table-bordered table-centered" style="background-color: rgb(255, 255, 255); border-color: #fe495f;">
+                    <table class="table table-bordered table-centered" id="formulaciones" style="background-color: rgb(255, 255, 255); border-color: #fe495f;">
                         <thead>
                             <tr style="background-color: #fe495f; color: white;">
                                 <th>Item</th>
@@ -99,10 +99,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-center mt-2 mb-3">
-                    {!! $formulaciones->appends(request()->except('page'))->links('pagination::bootstrap-5') !!}
-                </div> 
-            
+                
               <!-- Primera fila: Select de pago + Botón de resumen + botones dinámicos -->
             <div class="row align-items-center mb-3">
                 <div class="col-md-4 mb-3">
@@ -381,8 +378,7 @@
             }
         }
     });
-    document.getElementById('tipo_pago').dispatchEvent(new Event('change'));
-    
+    document.getElementById('tipo_pago').dispatchEvent(new Event('change')); 
 </script>
 <!-- script para el dom completo-->
 <script type="module" src="/src/js/cotizacion.js"></script>
