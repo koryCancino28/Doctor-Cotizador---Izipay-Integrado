@@ -131,14 +131,43 @@ $(function() {
             if (savedData) {
                 try {
                     const parsedData = JSON.parse(savedData);
+
                     if (parsedData.items) {
-                        Object.assign(cotizador, parsedData.items);
-                        actualizarBadgeNotificacion();
+                        const itemIds = Object.keys(parsedData.items);
+
+                        $.ajax({
+                            url: '/verificar-productos', // Ruta en tu backend
+                            method: 'POST',
+                            data: { ids: itemIds },
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function (res) {
+                                const productosValidos = res.ids_validos;
+
+                                for (const id of productosValidos) {
+                                    cotizador[id] = parsedData.items[id];
+                                }
+
+                                if (parsedData.observacion) {
+                                    $('#observacion').val(parsedData.observacion);
+                                }
+
+                                actualizarBadgeNotificacion();
+                                actualizarResumen();
+                                setStorage(JSON.stringify({
+                                    items: cotizador,
+                                    observacion: $('#observacion').val().trim(),
+                                    timestamp: new Date().getTime(),
+                                    userId: userId
+                                }));
+                            },
+                            error: function () {
+                                console.error('Error al verificar productos. Limpiando cotización.');
+                                clearStorage();
+                            }
+                        });
                     }
-                    if (parsedData.observacion) {
-                        $('#observacion').val(parsedData.observacion);
-                    }
-                    actualizarResumen();
                 } catch (e) {
                     console.error('Error al cargar datos guardados', e);
                     clearStorage();
@@ -284,7 +313,7 @@ $(function() {
                         actualizarResumen();
                         $('#notificacion-badge').text('0');
                         $('#voucher').val('');
-                        $('.cantidad-input').val('');
+                        $('.cantidad-input').val('1');
                         $('#codigo_transaccion').val('');
                     },
                     error: function(err) {

@@ -41,3 +41,4 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::delete('/formulaciones/{formulacione}/force', [FormulacionController::class, 'forceDestroy'])
      ->name('formulaciones.forceDestroy');
+Route::post('/verificar-productos', [CotizacionController::class, 'verificarExistencia']);

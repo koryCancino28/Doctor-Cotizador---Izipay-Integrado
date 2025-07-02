@@ -220,6 +220,14 @@ class CotizacionController extends Controller
 
         return view('cotizacion.mis_cotizaciones', compact('cotizaciones'));
     }
+// En tu controlador de productos
+public function verificarExistencia(Request $request)
+{
+    $ids = $request->input('ids', []);
+    $idsValidos = Formulacion::whereIn('id', $ids)->pluck('id')->toArray();
+
+    return response()->json(['ids_validos' => $idsValidos]);
+}
 
 
 }

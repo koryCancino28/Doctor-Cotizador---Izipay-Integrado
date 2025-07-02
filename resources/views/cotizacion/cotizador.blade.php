@@ -75,7 +75,7 @@
                         <thead>
                             <tr style="background-color: #fe495f; color: white;">
                                 <th>Item</th>
-                                <th>Nombre</th>
+                                <th>Formulación</th>
                                 <th>Precio Unidad <br><small>(De 7 a menos)</small></th>
                                 <th>Precio Unidad <br><small>(De 8 a más)</small></th>
                                 <th>Cantidad</th>
