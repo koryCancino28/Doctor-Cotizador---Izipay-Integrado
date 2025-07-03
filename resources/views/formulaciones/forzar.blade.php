@@ -3,6 +3,7 @@
 @section('title', 'Detalle de Formulación')
 
 @section('content_header')
+<div></div>
 @stop
 
 @section('content')
