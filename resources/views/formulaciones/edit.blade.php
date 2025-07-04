@@ -12,7 +12,7 @@
         <a href="{{ route('formulaciones.index') }}" class="text-secondary" title="Volver" style="position: absolute; left: 0; font-size: 2rem">
             <i class="fas fa-arrow-left"></i>
         </a>
-        <h1 class="text-center" style="color: #fe495f; font-weight: bold;">Editara Formulación</h1>
+        <h1 class="text-center" style="color: #fe495f; font-weight: bold;">Editar Formulación</h1>
     </div>
 
     <form action="{{ route('formulaciones.update', $formulacione) }}" method="POST">
