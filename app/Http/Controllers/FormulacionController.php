@@ -27,8 +27,8 @@ class FormulacionController extends Controller
         $request->validate([
             'item' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            'precio_publico' => 'required|numeric',
-            'precio_medico' => 'required|numeric',
+            'precio_publico' => 'required|numeric|between:0,999999.99',
+            'precio_medico'  => 'required|numeric|between:0,999999.99',
             'cliente_id' => 'required|exists:clientes,id',
         ]);
 
@@ -67,8 +67,8 @@ class FormulacionController extends Controller
         $request->validate([
             'item' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            'precio_publico' => 'required|decimal:0,2', 
-            'precio_medico' => 'required|decimal:0,2',
+            'precio_publico' => 'required|numeric|between:0,999999.99',
+            'precio_medico'  => 'required|numeric|between:0,999999.99',
             'cliente_id' => 'required|exists:clientes,id',
         ]);
 

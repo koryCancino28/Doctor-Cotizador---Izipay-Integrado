@@ -37,7 +37,8 @@
                         <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $formulacion->cliente->nombre }}</td>
                         <td>
                             <div class="w">
-                                <a href="{{ route('formulaciones.show', $formulacion) }}" class="btn btn-info btn-sm" style="background-color: #17a2b8; border-color: #17a2b8;"><i class="fa-regular fa-eye"></i>Ver</a>
+                                @include('formulaciones.show', ['formulacione' => $formulacion])
+                                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#detalleFormulacionModal{{ $formulacion->id }}" style="background-color: #17a2b8; border-color: #17a2b8;"><i class="fa-regular fa-eye"></i>Ver</button>
                                 <a href="{{ route('formulaciones.edit', $formulacion) }}" class="btn btn-warning btn-sm" style="background-color: #ffc107; border-color: #ffc107; color: white;"><i class="fa-solid fa-pen"></i>Editar</a>
                                 <form action="{{ route('formulaciones.destroy', $formulacion) }}" method="POST" class="d-inline">
                                     @csrf
@@ -98,7 +99,28 @@
             transform: scale(1.10); /* Un ligero aumento en tamaño cuando se pasa por encima */
             transition: transform 0.4s ease; /* Transición suave */
         }
+        .modal-body::-webkit-scrollbar,
+        .scrollable-custom::-webkit-scrollbar {
+            width: 8px;
+        }
 
+        .modal-body::-webkit-scrollbar-track,
+        .scrollable-custom::-webkit-scrollbar-track {
+            background: #fcebed;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb,
+        .scrollable-custom::-webkit-scrollbar-thumb {
+            background: rgb(255, 178, 187);
+            border-radius: 4px;
+        }
+
+        /* Estilos para Firefox */
+        .modal-body,
+        .scrollable-custom {
+            scrollbar-width: thin;
+            scrollbar-color: rgb(255, 178, 187) #fcebed;
+        }
     </style>
 @stop
 

@@ -88,7 +88,7 @@
                         <tr data-id="{{ $f->id }}" data-nombre="{{ $f->name }}" data-precio="{{ $f->precio_publico }}"
                             data-precio-medico="{{ $f->precio_medico }}" style="background-color: rgb(255, 255, 255);">
                             <td>{{ $f->item }}</td>
-                            <td>{{ $f->name }}</td>
+                            <td class="observaciones">{{ $f->name }}</td>
                             <td>S/ {{ number_format($f->precio_publico, 2) }}</td>
                             <td>S/ {{ number_format($f->precio_medico, 2) }}</td>
                             <td><input type="number" class="form-control cantidad-input" value="1" min="1" style="width:80px; border-color: #fe495f; text-align: center; display: block; margin: 0 auto;"></td>
@@ -353,6 +353,13 @@
         background-color:rgb(251, 81, 101); 
         color: white;
         margin: 0 auto;
+    }
+    table td.observaciones {
+    max-width: 100px;      /* Limita el ancho de la celda */
+    white-space: normal;   /* Permite saltos de línea */
+    overflow: hidden;      /* Oculta el desbordamiento si lo hay */
+    text-overflow: unset;  /* No muestra puntos suspensivos */
+    word-wrap: break-word; /* Fuerza el salto de línea si es necesario */
     }
 </style>
 @stop

@@ -93,7 +93,7 @@
             <div class="modal-body px-4 py-3">
                 <!-- Info -->
                 <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="overflow-wrap: break-word; white-space: normal;">
                     <p class="mb-1">
                         <strong class="text-danger">
                         <i class="fas fa-user-md mr-1"></i> Doctor:

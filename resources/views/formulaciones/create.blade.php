@@ -8,8 +8,12 @@
 
 @section('content')
 <div class="" style="background-color: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-    <h1 class="text-center" style="color: #fe495f; font-weight: bold;">Nueva Formulación</h1>
-
+    <div class="form-check mb-3 d-flex align-items-center justify-content-center position-relative">
+        <a href="{{ route('formulaciones.index') }}" class="text-secondary" title="Volver" style="position: absolute; left: 0; font-size: 2rem">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="text-center" style="color: #fe495f; font-weight: bold;">Nueva Formulación</h1>
+    </div>
     <form action="{{ route('formulaciones.store') }}" method="POST">
         @csrf
         <!-- Fila 1: Item y Nombre -->
@@ -52,8 +56,7 @@
             </select>
         </div>
 
-        <div class="d-flex justify-content-between">
-            <a href="{{ route('formulaciones.index') }}" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i>Volver</a>
+        <div class="d-flex justify-content-center">
             <button type="submit" class="btn" style="background-color: #fe495f; color: white; font-size: 1.1rem; padding: 12px 30px; border-radius: 8px;"><i class="fa-solid fa-floppy-disk"></i>Crear Formulación</button>
         </div>
     </form>
