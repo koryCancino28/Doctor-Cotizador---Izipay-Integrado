@@ -225,6 +225,19 @@
 
 @section('js')
 <script>
+  document.getElementById('voucher').addEventListener('change', function () {
+    const fileInput = this;
+    const fileNameDisplay = document.querySelector('#archivo-input-group2 small');
+
+    if (fileInput.files.length > 0) {
+      const fileName = fileInput.files[0].name;
+      fileNameDisplay.textContent = `Archivo seleccionado: ${fileName}`;
+    } else {
+      fileNameDisplay.textContent = 'Archivos permitidos: JPG, PNG y PDF. (máx. 5 MB).';
+    }
+  });
+</script>
+<script>
         $(document).ready(function() {
         $('#clientes-table').DataTable({
             language: {

@@ -134,7 +134,13 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
+table td.observaciones {
+    max-width: 100px;      /* Limita el ancho de la celda */
+    white-space: normal;   /* Permite saltos de línea */
+    overflow: hidden;      /* Oculta el desbordamiento si lo hay */
+    text-overflow: unset;  /* No muestra puntos suspensivos */
+    word-wrap: break-word; /* Fuerza el salto de línea si es necesario */
+    }
     </style>
 </head>
 <body>
@@ -146,7 +152,7 @@
     </div>
 
     <div class="header-section center">
-        <div class="title">PROFORMA DR. {{ strtoupper(Str::of($cliente->user->name)->explode(' ')->first()) }}</div>
+        <div class="title">PROFORMA DR. {{ strtoupper(Str::of($cliente->user->last_name)->explode(' ')->first()) }}</div>
     </div>
 
     <div class="header-section right">
@@ -160,7 +166,7 @@
     <div class="info">
         <table>
             <tr>
-                <td><strong style="color:rgb(244, 89, 107);">Doctor:</strong> {{ $cliente->user->name }} {{ $cliente->user->last_name }}</td>
+                <td class="observaciones"><strong style="color:rgb(244, 89, 107);">Doctor:</strong> {{ $cliente->user->name }} {{ $cliente->user->last_name }}</td>
                 <td><strong style="color:rgb(244, 89, 107);">CMP:</strong> {{ $cliente->cmp }}</td>
             </tr>
             <tr>
@@ -214,7 +220,7 @@
             @foreach($items as $item)
                 <tr>
                     <td>{{ $item['item'] }}</td>
-                    <td>{{ $item['nombre'] }}</td>
+                    <td class="observaciones">{{ $item['nombre'] }}</td>
                     <td>{{ $item['cantidad'] }}</td>
                     <td>S/ {{ number_format($item['precio'], 2) }}</td>
                     <td>S/ {{ number_format($item['subtotal'], 2) }}</td>
