@@ -175,7 +175,6 @@
 
 @section('css')
     <style>
-        /* Estilos personalizados */
         .btn-danger {
             background-color: #fe495f;
             color: white;
@@ -244,29 +243,28 @@
         }
         //ocultar contraseña 
        // ocultar contraseña 
-const toggleButton = document.getElementById('toggle-password-fields');
-const passwordFields = document.getElementById('password-fields');
+        const toggleButton = document.getElementById('toggle-password-fields');
+        const passwordFields = document.getElementById('password-fields');
 
-// Obtenemos todos los inputs dentro del contenedor
-const inputs = passwordFields.querySelectorAll('input');
+        // Obtenemos todos los inputs dentro del contenedor
+        const inputs = passwordFields.querySelectorAll('input');
 
-toggleButton.addEventListener('click', function () {
-    const isHidden = passwordFields.style.display === 'none' || passwordFields.style.display === '';
+        toggleButton.addEventListener('click', function () {
+            const isHidden = passwordFields.style.display === 'none' || passwordFields.style.display === '';
 
-    // Mostrar u ocultar campos
-    passwordFields.style.display = isHidden ? 'block' : 'none';
+            // Mostrar u ocultar campos
+            passwordFields.style.display = isHidden ? 'block' : 'none';
 
-    // Habilitar o deshabilitar inputs
-    inputs.forEach(input => {
-        input.disabled = !isHidden; // si se muestra, se habilita; si se oculta, se deshabilita
-    });
+            // Habilitar o deshabilitar inputs
+            inputs.forEach(input => {
+                input.disabled = !isHidden; // si se muestra, se habilita; si se oculta, se deshabilita
+            });
 
-    // Cambiar ícono del botón
-    toggleButton.innerHTML = isHidden
-        ? '<i class="fas fa-eye"></i>'   // se va a mostrar
-        : '<i class="fas fa-eye-slash"></i>'; // se va a ocultar
-});
-
+            // Cambiar ícono del botón
+            toggleButton.innerHTML = isHidden
+                ? '<i class="fas fa-eye"></i>'   // se va a mostrar
+                : '<i class="fas fa-eye-slash"></i>'; // se va a ocultar
+        });
     });
 
     </script>
