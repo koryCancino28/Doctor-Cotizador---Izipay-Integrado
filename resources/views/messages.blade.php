@@ -45,9 +45,11 @@
         padding: 1rem 2rem;
         border-radius: 0.75rem;
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-        min-width: 300px;
-        max-width: 90%;
+        min-width: 200px;
+        max-width: 90vw;
+        width: fit-content;
         text-align: center;
+        box-sizing: border-box;
     }
 
     .alert .icon {
@@ -90,6 +92,14 @@
             opacity: 0;
             transform: translateX(-50%) scale(0.95);
             visibility: hidden;
+        }
+    }
+    
+    @media(max-width: 400px){
+        .alert{
+            min-width: unset;
+            width: 90 vw;
+            padding: 1 rem;
         }
     }
 </style>
