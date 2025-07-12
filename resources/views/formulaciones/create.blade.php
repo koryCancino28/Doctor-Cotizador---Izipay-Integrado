@@ -51,7 +51,7 @@
             <select name="cliente_id" id="cliente_id" class="form-control form-control-lg select2" required style="border-color: #fe495f; box-shadow: 0 0 5px rgba(254, 73, 95, 0.3);">
                 <option value="">Seleccionar Cliente</option>
                 @foreach($clientes as $cliente)
-                    <option value="{{ $cliente->id }}">{{ $cliente->nombre }} ({{ $cliente->cmp }})</option>
+                    <option value="{{ $cliente->id }}">{{ $cliente->nombre }} {{ $cliente->user->last_name }} ({{ $cliente->cmp }})</option>
                 @endforeach
             </select>
         </div>

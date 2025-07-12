@@ -165,9 +165,11 @@
                                     <i class="fas fa-file-upload me-2 text-secondary" style="margin-right: 5px;"></i> 
                                     Elegir archivo
                                 </label>
-                                <input type="file" class="d-none" id="voucher" name="voucher" accept="image/*,application/pdf">
+                                <input type="file" class="d-none" id="voucher" name="voucher" accept="image/*">
                             </div>
-                            <small class="form-text text-muted">Formatos permitidos: PDF, JPG, PNG (máx. 2MB)</small><br>
+                            <div class="input-group justify-content-center mt-2"  id="archivo-input-group2">
+                                <small class="form-text text-muted">Formatos permitidos: JPG, PNG (máx. 2MB)</small><br>
+                            </div>
                             <div class="form-group mt-2">
                                 <label for="codigo_transaccion" style="color: #fe495f; font-style: italic;">Código de transacción (opcional)</label>
                                 <input type="text" name="codigo_transaccion" id="codigo_transaccion" class="form-control mx-auto" style="width: 70%;" placeholder="Ejemplo: 1234567890ABCD" maxlength="12">
@@ -386,6 +388,17 @@
         }
     });
     document.getElementById('tipo_pago').dispatchEvent(new Event('change')); 
+    document.getElementById('voucher').addEventListener('change', function () {
+    const fileInput = this;
+    const fileNameDisplay = document.querySelector('#archivo-input-group2 small');
+
+    if (fileInput.files.length > 0) {
+      const fileName = fileInput.files[0].name;
+      fileNameDisplay.textContent = `Archivo seleccionado: ${fileName}`;
+    } else {
+      fileNameDisplay.textContent = 'Archivos permitidos: JPG, PNG y PDF. (máx. 5 MB).';
+    }
+  });
 </script>
 <!-- script para el dom completo-->
 <script type="module" src="/src/js/cotizacion.js"></script>
