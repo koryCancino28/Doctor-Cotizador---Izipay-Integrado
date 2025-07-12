@@ -115,7 +115,7 @@
                     <select id="tipo_pago" name="tipo_pago" required class="form-select" style="cursor: pointer;">
                         <option value="" disabled selected>Seleccione un método de pago</option>
                         <option value="contra_entrega">Pago contra entrega</option>
-                        <option value="pasarela_izipay">Tarjeta, Yape, Plin</option>
+                        <!-- <option value="pasarela_izipay">Tarjeta, Yape, Plin</option> -->
                         <option value="transferencia">Depósito o Transferencia</option>
                     </select>
                 </div>
