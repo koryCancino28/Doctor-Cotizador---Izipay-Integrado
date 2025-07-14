@@ -27,7 +27,7 @@
                 @foreach ($clientes as $cliente)
                     @foreach ($cliente->cotizaciones as $cotizacion)
                         <tr class="cotizacion-row" data-cliente-id="{{ $cliente->id }}">
-                            <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $cliente->nombre }}</td>
+                            <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $cliente->nombre }} {{ $cliente->user->last_name }}</td>
                             <td>S/ {{ number_format($cotizacion->total, 2) }}</td>
                             <td>{{ ucfirst($cotizacion->tipo_pago) }}</td>
                             <td>
