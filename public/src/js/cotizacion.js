@@ -5,6 +5,7 @@ $(document).ready(function () {
             ordering: false,
             info: false,
             lengthChange: false, 
+            pageLength: 5,
             language: {
                 paginate: {
                     previous: '«',
