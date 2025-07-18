@@ -29,5 +29,9 @@ class RoleSeeder extends Seeder
             'name' => 'Doctor',
             'description' => 'Doctor con permisos para gestionar sus formulaciones',
         ]);
+        Role::create([
+            'name' => 'Jefa Comercial',
+            'description' => 'Usuario que visualiza los reportes de cada visitadora',
+        ]);
     }
 }

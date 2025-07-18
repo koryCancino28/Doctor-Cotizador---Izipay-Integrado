@@ -358,21 +358,38 @@ return [
         ],
         //SIDEBAR JEFE PROYECTOS
         [
-            'header' => 'FORMULACIONES',
-            'can' => 'Jefe Proyectos',
+            'header' => 'Formulaciones',
+            'can'=> ['Jefa Comercial', 'Admin', 'Jefe Proyectos'],
+
         ],
         [
             'text' => 'Formulaciones',
             'url' => 'formulaciones',
             'icon' => 'fas fa-flask',
-            'can'=> 'Jefe Proyectos',
-        ],
+            'can'=> ['Jefa Comercial', 'Admin', 'Jefe Proyectos'],
 
+        ],
+        [
+            'header' => 'Mantenimiento',
+            'can'=> ['Jefa Comercial', 'Admin', 'Jefe Proyectos'],
+
+        ],
         [
             'text' => 'Registrar Usuarios',
             'url' => 'usuarios',
             'icon' => 'fas fa-users',
-            'can' => 'Jefe Proyectos',
+            'can'=> ['Jefa Comercial', 'Admin', 'Jefe Proyectos'],
+
+        ],
+        [
+            'header' => 'Reportes',
+            'can' => 'Jefa Comercial',
+        ],
+        [
+            'text' => 'Reporte Visitadoras',
+            'url' => 'reporte/visitadoras',
+            'icon' => 'fas fa-chart-pie',
+            'can'=> 'Jefa Comercial',
         ],
         ////otros tipo del sidebar
         //[

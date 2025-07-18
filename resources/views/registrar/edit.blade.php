@@ -84,7 +84,8 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-lock" style="color:rgb(245, 114, 129);"></i></span>
                                         </div>
-                                        <input type="password" name="password" id="password" class="form-control" placeholder="Nueva contraseña (8 caracteres)">
+                                        <input type="password" name="password" id="password" class="form-control" placeholder="Nueva contraseña (8 caracteres)"
+                                             disabled autocomplete="new-password">
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-secondary toggle-password" type="button">
                                                 <i class="fas fa-eye"></i>
@@ -100,7 +101,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-lock" style="color:rgb(245, 114, 129);"></i></span>
                                         </div>
-                                        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Repita la contraseña">
+                                        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Repita la contraseña" disabled autocomplete="new-password">
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-secondary toggle-confirm-password" type="button">
                                                 <i class="fas fa-eye"></i>
@@ -241,7 +242,6 @@
         if (roleSelect.value == '4') {
             cmpGroup.style.display = 'block'; // Mostrar el campo CMP si el rol es Doctor
         }
-        //ocultar contraseña 
        // ocultar contraseña 
         const toggleButton = document.getElementById('toggle-password-fields');
         const passwordFields = document.getElementById('password-fields');

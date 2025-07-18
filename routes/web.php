@@ -5,6 +5,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FormulacionController;
+use App\Http\Controllers\ReporteVisitadoraController;
 
 Auth::routes();
 
@@ -12,15 +13,15 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 //CRUD PARA REGISTRAR A UN DOCTOR
 Route::resource('usuarios', RegisterController::class)
-    ->middleware('checkRole:Admin,Jefe Proyecto'); 
+    ->middleware('checkRole:Admin,Jefe Proyecto,Jefa Comercial'); 
 
 Route::get('/registrar', [RegisterController::class, 'showRegistrationForm'])
     ->name('register.show')
-    ->middleware('checkRole:Admin,Jefe Proyecto'); 
+    ->middleware('checkRole:Admin,Jefe Proyecto,Jefa Comercial'); 
 
 Route::post('/registrar', [RegisterController::class, 'register'])
     ->name('register.store')
-    ->middleware('checkRole:Admin,Jefe Proyecto'); 
+    ->middleware('checkRole:Admin,Jefe Proyecto,Jefa Comercial'); 
 
 //CLIENTE
 Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index')->middleware('checkRole:Admin,Visitadora Medica');
@@ -33,7 +34,7 @@ Route::post('/cotizaciones', [CotizacionController::class, 'store'])->name('coti
 
 //FORMULACION CRUD
 Route::resource('formulaciones', FormulacionController::class)
-    ->parameters(['formulaciones' => 'formulacione'])->middleware('checkRole:Admin, Jefe Proyecto'); 
+    ->parameters(['formulaciones' => 'formulacione'])->middleware('checkRole:Admin,Jefe Proyecto,Jefa Comercial'); 
 
 //COTIZACIONES DE CADA DOCTOR
 Route::middleware(['auth'])->group(function () {
@@ -42,3 +43,5 @@ Route::middleware(['auth'])->group(function () {
 Route::delete('/formulaciones/{formulacione}/force', [FormulacionController::class, 'forceDestroy'])
      ->name('formulaciones.forceDestroy');
 Route::post('/verificar-productos', [CotizacionController::class, 'verificarExistencia']);
+//Reporte visitadoras
+Route::get('/reporte/visitadoras', [ReporteVisitadoraController::class, 'index'])->name('reporte.visitadoras')->middleware('checkRole:Admin,Jefa Comercial');
