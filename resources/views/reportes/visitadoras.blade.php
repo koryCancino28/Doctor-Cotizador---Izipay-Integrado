@@ -170,9 +170,9 @@
                 '#a78bfa',  // Lavanda clara
                 '#ff93a5',  // Rosa claro pastel
                 '#5ee1e6',  // Aqua pastel brillante
+                '#9be7a3',  // Verde menta suave
                 '#fe495f',  // Rosa vibrante (color base)
                 '#ffc145',  // Amarillo cálido vibrante
-                '#9be7a3',  // Verde menta suave
                 '#fcbf49'   // Naranja pastel brillante
                 ],
                 borderWidth: 1
